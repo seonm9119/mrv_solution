@@ -1,5 +1,5 @@
 > **[비공개 프로젝트]** 본 저장소는 재직 중인 회사의 업무 프로젝트로, 소속 회사의 정책에 따라 소스 코드를 공개하지 않습니다.  
-> This is a private company project. Source code is not disclosed in accordance with company policy.
+> 코드 대신, 각 폴더마다 구현 내용과 설계를 상세히 설명한 `README.md` 파일이 있습니다.
 
 ---
 
