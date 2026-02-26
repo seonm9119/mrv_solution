@@ -1,0 +1,27 @@
+services:
+  deepseek_ocr:
+    build:
+      context: ../..   # backend/ (Dockerfile COPY model/... 경로 기준)
+      dockerfile: model/deepseek_ocr/Dockerfile
+    image: deepseek-ocr:latest
+    container_name: deepseek-ocr
+    restart: no
+    ports:
+      - "8002:4000"
+    volumes:
+      - ../../../output:/app/output
+    environment:
+      - PYTHONUNBUFFERED=1
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://localhost:4000/health')\" || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 120s

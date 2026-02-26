@@ -1,0 +1,982 @@
+<!-- ═══════════════════════════════════════════════════════
+     C Section Partial — Scope 1 (Mobile & Stationary)
+     Layout: 차트·LLM 교차 배치 / "—" 카드 자동 숨김
+     ═══════════════════════════════════════════════════════ -->
+<section class="section" id="secCharts">
+<div class="hd">
+<h2 class="title"><span class="secno">C</span>월별 활동자료 &amp; 배출량 시각화 (Data Visualization)</h2>
+<span class="tag">Charts</span>
+</div>
+<div class="bd">
+
+<!-- ─── 파라미터 요약 카드 4종 (2×2) ──────────────────────── -->
+<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:16px">
+
+  <!-- 배출 산정 파라미터 -->
+  <div data-param-card style="background:#fff;border:1.5px solid #d1fae5;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(21,81,68,.08)">
+    <div style="background:linear-gradient(135deg,#0f3d33,#1f8a70);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:30px;height:30px;background:rgba(255,255,255,.15);border-radius:8px;display:grid;place-items:center;font-size:15px">⚗️</div>
+        <div>
+          <div style="font-size:var(--fs-sm);font-weight:var(--fw-heavy);color:#fff;letter-spacing:.3px">배출 산정 파라미터</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.65);margin-top:1px">{{db:mrv_files.link_monthly_raw}}</div>
+        </div>
+      </div>
+      <span style="font-size:10px;font-weight:700;padding:3px 9px;background:rgba(255,255,255,.2);color:#fff;border-radius:20px;letter-spacing:.3px;border:1px solid rgba(255,255,255,.25)">Emission Params</span>
+    </div>
+    <div style="padding:14px 18px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 12px">
+          <div style="font-size:10px;color:#15803d;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">활동 자료 (AD)</div>
+          <div style="font-size:14px;font-weight:800;color:#0f172a;line-height:1.2">{{db:mrv_activity_data.usage}}</div>
+          <div style="font-size:10px;color:#64748b;margin-top:2px">{{db:mrv_activity_data.usage_unit}}</div>
+        </div>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 12px">
+          <div style="font-size:10px;color:#15803d;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">산정 결과</div>
+          <div style="font-size:14px;font-weight:800;color:#155144;line-height:1.2">{{db:mrv_calculation_result.emission}}</div>
+          <div style="font-size:10px;color:#64748b;margin-top:2px">{{db:mrv_calculation_result.emissions_unit}}</div>
+        </div>
+      </div>
+      <div style="border-top:1px solid #e5e7eb;padding-top:10px;display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:11px;color:#64748b">배출계수 (EF)</span>
+          <span style="font-size:11px;font-weight:600;color:#0f172a">{{db:mrv_emission_factor_ref.emission_factor}} {{db:mrv_emission_factor_ref.emission_factor_unit}}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:11px;color:#64748b">TIER 수준</span>
+          <span style="font-size:10px;font-weight:700;padding:2px 9px;background:#dcfce7;color:#15803d;border-radius:20px">{{db:mrv_emission_factor_ref.ef_tier}}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:11px;color:#64748b">참조 근거</span>
+          <span style="font-size:10px;color:#475569;text-align:right;max-width:55%">{{db:mrv_emission_factor_ref.ef_source}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 계량기 검교정 정보 -->
+  <div data-param-card style="background:#fff;border:1.5px solid #bfdbfe;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(37,99,235,.07)">
+    <div style="background:linear-gradient(135deg,#1e3a8a,#2563eb);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:30px;height:30px;background:rgba(255,255,255,.15);border-radius:8px;display:grid;place-items:center;font-size:15px">🔧</div>
+        <div>
+          <div style="font-size:var(--fs-sm);font-weight:var(--fw-heavy);color:#fff;letter-spacing:.3px">계량기 검교정 정보</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.65);margin-top:1px">{{db:mrv_document_metadata.instrument_id}}</div>
+        </div>
+      </div>
+      <span style="font-size:10px;font-weight:700;padding:3px 9px;background:rgba(255,255,255,.2);color:#fff;border-radius:20px;letter-spacing:.3px;border:1px solid rgba(255,255,255,.25)">교정 정보</span>
+    </div>
+    <div style="padding:14px 18px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 12px">
+          <div style="font-size:10px;color:#1d4ed8;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">계량기 유형</div>
+          <div style="font-size:13px;font-weight:800;color:#0f172a;line-height:1.3;word-break:break-all">{{db:mrv_document_metadata.instrument_name}}</div>
+        </div>
+        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 12px">
+          <div style="font-size:10px;color:#1d4ed8;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">정확도</div>
+          <div style="font-size:13px;font-weight:800;color:#92400e;line-height:1.3">{{db:mrv_document_metadata.instrument_accuracy}}</div>
+          <div style="font-size:10px;color:#64748b;margin-top:2px">불확도: {{db:mrv_calculation_result.combined_uncertainty}}</div>
+        </div>
+      </div>
+      <div style="border-top:1px solid #e5e7eb;padding-top:10px;display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:11px;color:#64748b">시리얼 ID</span>
+          <span style="font-size:11px;font-weight:600;color:#0f172a">{{db:mrv_document_metadata.instrument_id}}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:11px;color:#64748b">검교정일</span>
+          <span style="font-size:11px;font-weight:600;color:#1d4ed8">{{db:mrv_document_metadata.calibration_date}}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:11px;color:#64748b">교정 증빙</span>
+          <span style="font-size:10px;color:#475569;text-align:right;max-width:55%">{{db:mrv_document_metadata.calibration_evidence_file}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 배출 활동 방법론 -->
+  <div data-param-card style="background:#fff;border:1.5px solid #e9d5ff;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(124,58,237,.07)">
+    <div style="background:linear-gradient(135deg,#4c1d95,#7c3aed);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:30px;height:30px;background:rgba(255,255,255,.15);border-radius:8px;display:grid;place-items:center;font-size:15px">📋</div>
+        <div>
+          <div style="font-size:var(--fs-sm);font-weight:var(--fw-heavy);color:#fff;letter-spacing:.3px">배출 활동 방법론</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.65);margin-top:1px">{{db:mrv_activity_data.data_source}}</div>
+        </div>
+      </div>
+      <span style="font-size:10px;font-weight:700;padding:3px 9px;background:rgba(255,255,255,.2);color:#fff;border-radius:20px;letter-spacing:.3px;border:1px solid rgba(255,255,255,.25)">방법론</span>
+    </div>
+    <div style="padding:14px 18px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+        <div style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:8px;padding:10px 12px">
+          <div style="font-size:10px;color:#7c3aed;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">활동 유형</div>
+          <div style="font-size:13px;font-weight:800;color:#0f172a;line-height:1.3">{{db:mrv_activity_data.activity_name}}</div>
+        </div>
+        <div style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:8px;padding:10px 12px">
+          <div style="font-size:10px;color:#7c3aed;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">사이트</div>
+          <div style="font-size:13px;font-weight:800;color:#0f172a;line-height:1.3">{{db:mrv_activity_data.facility}}</div>
+        </div>
+      </div>
+      <div style="border-top:1px solid #e5e7eb;padding-top:10px;display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:11px;color:#64748b">EF TIER</span>
+          <span style="font-size:10px;font-weight:700;padding:2px 9px;background:#dcfce7;color:#15803d;border-radius:20px">{{db:mrv_emission_factor_ref.ef_tier}}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:11px;color:#64748b">EF 값</span>
+          <span style="font-size:11px;font-weight:600;color:#155144">{{db:mrv_emission_factor_ref.emission_factor}} {{db:mrv_emission_factor_ref.emission_factor_unit}}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:11px;color:#64748b">참조 기준</span>
+          <span style="font-size:10px;color:#475569;text-align:right;max-width:55%">{{db:mrv_emission_factor_ref.ef_source}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 사업자 정보 -->
+  <div data-param-card style="background:#fff;border:1.5px solid #fed7aa;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(194,65,12,.07)">
+    <div style="background:linear-gradient(135deg,#7c2d12,#ea580c);padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:30px;height:30px;background:rgba(255,255,255,.15);border-radius:8px;display:grid;place-items:center;font-size:15px">🏢</div>
+        <div>
+          <div style="font-size:var(--fs-sm);font-weight:var(--fw-heavy);color:#fff;letter-spacing:.3px">사업자 정보</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.65);margin-top:1px">{{db:mrv_report.report_id}}</div>
+        </div>
+      </div>
+      <span style="font-size:10px;font-weight:700;padding:3px 9px;background:rgba(255,255,255,.2);color:#fff;border-radius:20px;letter-spacing:.3px;border:1px solid rgba(255,255,255,.25)">법인 정보</span>
+    </div>
+    <div style="padding:14px 18px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+        <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px 12px">
+          <div style="font-size:10px;color:#c2410c;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">법인명</div>
+          <div style="font-size:13px;font-weight:800;color:#1d4ed8;line-height:1.3">{{db:mrv_document_metadata.organization_name}}</div>
+        </div>
+        <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px 12px">
+          <div style="font-size:10px;color:#c2410c;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">인벤토리 연도</div>
+          <div style="font-size:22px;font-weight:900;color:#0f172a;line-height:1.1">{{db:mrv_activity_data.inventory_year}}</div>
+        </div>
+      </div>
+      <div style="border-top:1px solid #e5e7eb;padding-top:10px;display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:11px;color:#64748b">자산명</span>
+          <span style="font-size:11px;font-weight:600;color:#0f172a">{{db:mrv_report.asset_name}}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:11px;color:#64748b">데이터 소유자</span>
+          <span style="font-size:11px;font-weight:600;color:#0f172a">{{db:mrv_report.data_owner}}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:11px;color:#64748b">검증 기준</span>
+          <span style="font-size:10px;color:#475569;text-align:right;max-width:55%">{{db:mrv_report.verification_standard}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ① KPI 카드: "—"인 카드는 JS가 자동 숨김 -->
+<div class="chart-kpi-row" id="kpiRow" style="grid-template-columns:repeat(5,1fr)">
+  <div class="chart-kpi ck-dark" data-kpi>
+    <div class="ck-label">연간 연료 소비 (AD)</div>
+    <div class="ck-val">{{db:mrv_activity_data.usage}}</div>
+    <div class="ck-unit">{{db:mrv_activity_data.usage_unit}}</div>
+    <span class="ck-icon">⛽</span>
+  </div>
+  <div class="chart-kpi ck-mid" data-kpi>
+    <div class="ck-label">연간 GHG 배출량</div>
+    <div class="ck-val">{{db:mrv_calculation_result.emission}}</div>
+    <div class="ck-unit">{{db:mrv_calculation_result.emissions_unit}}</div>
+    <span class="ck-icon">🌿</span>
+  </div>
+  <div class="chart-kpi ck-light" data-kpi>
+    <div class="ck-label">배출계수 (EF)</div>
+    <div class="ck-val">{{db:mrv_emission_factor_ref.emission_factor}}</div>
+    <div class="ck-unit">{{db:mrv_emission_factor_ref.emission_factor_unit}}</div>
+    <span class="ck-icon">📐</span>
+  </div>
+  <div class="chart-kpi ck-slate" data-kpi>
+    <div class="ck-label">{{db:chart_summary.operating_unit_label}}</div>
+    <div class="ck-val">{{db:chart_summary.total_operating_unit}}</div>
+    <div class="ck-unit">{{db:chart_summary.operating_unit_unit}}</div>
+    <span class="ck-icon">🔧</span>
+  </div>
+  <div class="chart-kpi ck-violet" data-kpi>
+    <div class="ck-label">{{db:chart_summary.efficiency_label}}</div>
+    <div class="ck-val">{{db:chart_summary.avg_efficiency}}</div>
+    <div class="ck-unit">{{db:chart_summary.efficiency_unit}}</div>
+    <span class="ck-icon">⚡</span>
+  </div>
+  <div class="chart-kpi ck-gold" id="kpiTotalCostCard" data-kpi style="display:none">
+    <div class="ck-label">총 연료 비용</div>
+    <div class="ck-val" id="kpiTotalCostVal">—</div>
+    <div class="ck-unit" id="kpiTotalCostUnit">KRW</div>
+    <div class="ck-badge" id="kpiTotalCostBasis"></div>
+    <span class="ck-icon">💰</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     ⑤ 최종 MRV 의견 (Final MRV Opinion)
+     ═══════════════════════════════════════════════════════ -->
+<div class="card" style="margin-bottom:14px;border-color:#155144">
+  <div class="chd" style="background:linear-gradient(135deg,#0f3d33 0%,#155144 100%);border-bottom:2px solid #0f3d33">
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:16px">📋</span>
+      <div>
+        <h3 style="margin:0;color:#fff;text-transform:uppercase;letter-spacing:.5px">최종 MRV 의견</h3>
+        <div style="font-size:10px;color:rgba(255,255,255,.55);margin-top:1px;font-weight:400">Pre-submission Readiness Check</div>
+      </div>
+    </div>
+    <span id="mrvOpinionOverallBadge" class="tag">{{db:mrv_opinion.overall_status}}</span>
+  </div>
+  <div class="cbd" style="padding:0">
+  <!-- 4행 테이블: 항목 | 값 | 판정 근거 | 상태 -->
+  <table style="width:100%;border-collapse:collapse;font-size:12px">
+    <thead>
+      <tr style="background:#155144">
+        <th style="padding:10px 18px;text-align:left;font-size:11px;font-weight:700;color:rgba(255,255,255,.85);text-transform:uppercase;letter-spacing:.4px;width:28%">항목</th>
+        <th style="padding:10px 18px;text-align:left;font-size:11px;font-weight:700;color:rgba(255,255,255,.85);text-transform:uppercase;letter-spacing:.4px;width:20%">값</th>
+        <th style="padding:10px 18px;text-align:left;font-size:11px;font-weight:700;color:rgba(255,255,255,.85);text-transform:uppercase;letter-spacing:.4px">판정 근거</th>
+        <th style="padding:10px 18px;text-align:center;font-size:11px;font-weight:700;color:rgba(255,255,255,.85);text-transform:uppercase;letter-spacing:.4px;width:18%">상태</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- ① Fuel AD Adjustment -->
+      <tr style="border-bottom:1px solid #e8f5f1">
+        <td style="padding:11px 18px;border-left:3px solid #2eaf8c">
+          <div style="font-size:12px;font-weight:700;color:#0f3d33">Fuel AD Adjustment</div>
+          <div style="font-size:10px;color:#94a3b8;margin-top:1px">월별 활동자료 조정값 합계</div>
+        </td>
+        <td style="padding:11px 18px;font-size:12px;font-weight:600;color:#0f172a">{{db:mrv_opinion.fuel_adj_value}}</td>
+        <td style="padding:11px 18px;font-size:11px;color:#475569">{{db:mrv_opinion.fuel_adj_reason}}</td>
+        <td style="padding:11px 18px;text-align:center">
+          <span data-opinion-status="{{db:mrv_opinion.fuel_adj_status}}" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap">{{db:mrv_opinion.fuel_adj_status}}</span>
+        </td>
+      </tr>
+      <!-- ② Operating Unit — Declared -->
+      <tr style="border-bottom:1px solid #e8f5f1;background:#f0faf7">
+        <td style="padding:11px 18px;border-left:3px solid #2eaf8c">
+          <div style="font-size:12px;font-weight:700;color:#0f3d33">Operating Unit — Declared</div>
+          <div style="font-size:10px;color:#94a3b8;margin-top:1px">연간보고서 기재값 (Log 기반)</div>
+        </td>
+        <td style="padding:11px 18px;font-size:12px;font-weight:600;color:#0f172a">{{db:mrv_opinion.op_decl_value}}</td>
+        <td style="padding:11px 18px;font-size:11px;color:#475569">{{db:mrv_opinion.op_decl_reason}}</td>
+        <td style="padding:11px 18px;text-align:center">
+          <span data-opinion-status="{{db:mrv_opinion.op_decl_status}}" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap">{{db:mrv_opinion.op_decl_status}}</span>
+        </td>
+      </tr>
+      <!-- ③ Operating Unit — Accepted -->
+      <tr style="border-bottom:1px solid #e8f5f1">
+        <td style="padding:11px 18px;border-left:3px solid #2eaf8c">
+          <div style="font-size:12px;font-weight:700;color:#0f3d33">Operating Unit — Accepted</div>
+          <div style="font-size:10px;color:#94a3b8;margin-top:1px">채택값 (Meter 기반)</div>
+        </td>
+        <td style="padding:11px 18px;font-size:12px;font-weight:600;color:#0f172a">{{db:mrv_opinion.op_acc_value}}</td>
+        <td style="padding:11px 18px;font-size:11px;color:#475569">{{db:mrv_opinion.op_acc_reason}}</td>
+        <td style="padding:11px 18px;text-align:center">
+          <span data-opinion-status="{{db:mrv_opinion.op_acc_status}}" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap">{{db:mrv_opinion.op_acc_status}}</span>
+        </td>
+      </tr>
+      <!-- ④ Fuel Efficiency Consistency -->
+      <tr style="background:#f0faf7">
+        <td style="padding:11px 18px;border-left:3px solid #2eaf8c">
+          <div style="font-size:12px;font-weight:700;color:#0f3d33">Fuel Efficiency Consistency</div>
+          <div style="font-size:10px;color:#94a3b8;margin-top:1px">월별 연료효율 변동계수 (CV)</div>
+        </td>
+        <td style="padding:11px 18px;font-size:12px;font-weight:600;color:#0f172a">{{db:mrv_opinion.fuel_eff_value}}</td>
+        <td style="padding:11px 18px;font-size:11px;color:#475569">{{db:mrv_opinion.fuel_eff_reason}}</td>
+        <td style="padding:11px 18px;text-align:center">
+          <span data-opinion-status="{{db:mrv_opinion.fuel_eff_status}}" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap">{{db:mrv_opinion.fuel_eff_status}}</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <!-- Readiness Score 바 -->
+  <div style="padding:12px 18px;background:#0f3d33;display:flex;align-items:center;gap:12px">
+    <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.4px;white-space:nowrap">Verification Risk</div>
+    <span id="mrvReadinessRiskBadge" data-risk="{{db:mrv_opinion.readiness_risk}}" style="font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px">{{db:mrv_opinion.readiness_risk}}</span>
+    <div style="font-size:11px;color:rgba(255,255,255,.6);flex:1">{{db:mrv_opinion.readiness_verdict}}</div>
+  </div>
+  </div><!-- /.cbd -->
+</div><!-- /.card -->
+
+<!-- QA/QC Readiness Narrative LLM 카드 -->
+<div class="card" style="margin-bottom:14px" data-llm-card>
+  <div class="chd" style="background:linear-gradient(180deg,#faf5ff,#f3e8ff);border-bottom:2px solid #7c3aed">
+    <h3 style="color:#4c1d95;text-transform:uppercase;letter-spacing:.5px">QA/QC Readiness Explanation</h3>
+    <span class="tag tag-llm">인공지능 분석</span>
+  </div>
+  <div class="cbd">
+    <div class="narr mt0">
+{{llm:qaqc_readiness_narrative|ref=db:mrv_opinion.llm_decl_val,db:mrv_opinion.llm_acc_val,db:mrv_opinion.llm_diff_pct,db:mrv_opinion.llm_rejection_reason,db:mrv_opinion.llm_adj_total,db:mrv_opinion.llm_fuel_eff_cv,db:mrv_opinion.llm_emissions,db:mrv_opinion.llm_op_unit}}
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  document.querySelectorAll('[data-opinion-status]').forEach(function(el){
+    var s = el.getAttribute('data-opinion-status') || '';
+    if (s === 'PASS' || s === 'PASS · Accepted') {
+      el.style.background = '#dcfce7'; el.style.color = '#166534';
+    } else if (s.startsWith('WARN') || s === 'FAIL') {
+      el.style.background = '#fef3c7'; el.style.color = '#92400e';
+    } else {
+      el.style.background = '#f1f5f9'; el.style.color = '#64748b';
+    }
+  });
+  var ob = document.getElementById('mrvOpinionOverallBadge');
+  if (ob) {
+    var os = ob.textContent.trim();
+    if (os === 'PASS') {
+      ob.style.background = '#2eaf8c'; ob.style.color = '#fff'; ob.style.border = '1px solid rgba(255,255,255,.3)';
+    } else if (os === 'WARN' || os === 'FAIL') {
+      ob.style.background = '#d97706'; ob.style.color = '#fff'; ob.style.border = '1px solid rgba(255,255,255,.3)';
+    } else {
+      ob.style.background = 'rgba(255,255,255,.15)'; ob.style.color = '#fff'; ob.style.border = '1px solid rgba(255,255,255,.3)';
+    }
+  }
+  var rb = document.getElementById('mrvReadinessRiskBadge');
+  if (rb) {
+    var r = rb.getAttribute('data-risk') || '';
+    if (r === 'Low')         { rb.style.background='#2eaf8c'; rb.style.color='#fff'; }
+    else if (r === 'Medium') { rb.style.background='#d97706'; rb.style.color='#fff'; }
+    else if (r === 'High')   { rb.style.background='#dc2626'; rb.style.color='#fff'; }
+    else { rb.style.background='rgba(255,255,255,.15)'; rb.style.color='rgba(255,255,255,.8)'; }
+  }
+})();
+</script>
+
+<!-- ① Monthly Usage & Emissions 듀얼축 차트 (전체 폭) -->
+<div class="card" style="margin-bottom:14px">
+  <div class="chd" style="background:linear-gradient(180deg,#f8fafc,#f1f5f9)">
+    <h3 style="text-transform:uppercase;letter-spacing:.5px">Monthly Usage &amp; Emissions</h3>
+  </div>
+  <div class="cbd">
+    <div class="chart-canvas-wrap" style="position:relative;height:240px">
+      <canvas id="chartMonthlyDual"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ① Monthly Usage & Emissions 하단 — 월별 소비 급증 구간 분석 (전체 폭) -->
+<div class="card" style="margin-bottom:14px" data-llm-card>
+  <div class="chd" style="background:linear-gradient(180deg,#faf5ff,#f3e8ff);border-bottom:2px solid #7c3aed">
+    <h3 style="color:#4c1d95;text-transform:uppercase;letter-spacing:.5px">월별 소비 급증 구간 분석</h3>
+    <span class="tag tag-llm">인공지능 분석</span>
+  </div>
+  <div class="cbd">
+    <div class="narr mt0">
+{{llm:monthly_spike_analysis|ref=db:monthly_summary_text,db:mrv_activity_data.usage_unit,db:mrv_activity_data.inventory_year,db:mrv_activity_data.activity_name,db:mrv_activity_data.facility}}
+    </div>
+  </div>
+</div>
+
+<!-- ② 월별 연료 소비 비중 (1×1 전체 폭) -->
+<div class="card" style="margin-bottom:14px">
+  <div class="chd">
+    <h3>월별 연료 소비 비중</h3>
+    <span class="tag">Share %</span>
+  </div>
+  <div class="cbd" style="display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center">
+    <div class="chart-canvas-wrap" style="max-height:220px"><canvas id="chartShare"></canvas></div>
+    <div id="shareMinMaxWrap" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;min-width:260px"></div>
+  </div>
+</div>
+
+<!-- ③ 배출 감축 핵심 레버 LLM (1×1 전체 폭) -->
+<div class="card" style="margin-bottom:14px" data-llm-card>
+  <div class="chd" style="background:linear-gradient(180deg,#faf5ff,#f3e8ff);border-bottom:2px solid #7c3aed">
+    <h3 style="color:#4c1d95;text-transform:uppercase;letter-spacing:.5px">배출 감축 핵심 레버</h3>
+    <span class="tag tag-llm">인공지능 분석</span>
+  </div>
+  <div class="cbd">
+    <div class="narr mt0">
+{{llm:fuel_reduction_levers|ref=db:mrv_activity_data.usage,db:mrv_activity_data.usage_unit,db:mrv_calculation_result.emission,db:mrv_calculation_result.emissions_unit,db:mrv_activity_data.activity_name,db:mrv_activity_data.facility,db:mrv_emission_factor_ref.emission_factor,db:monthly_summary_text}}
+    </div>
+  </div>
+</div>
+
+<!-- ⑤⑥ 연료 효율 + 인보이스 요약 (1행 2열 통합 카드) -->
+<div class="card" style="margin-bottom:14px" id="effCard">
+  <div class="chd" style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1.5px solid var(--line)">
+    <div style="display:flex;align-items:center;gap:8px;padding:10px 18px;border-right:1px solid var(--line)">
+      <h3 style="margin:0">월별 연료 효율 ({{db:chart_summary.efficiency_unit}})</h3>
+      <span class="tag">효율 분석</span>
+    </div>
+    <div id="costSection" style="display:flex;align-items:center;gap:8px;padding:10px 18px">
+      <h3 style="margin:0">월별 인보이스 요약</h3>
+      <span class="tag">인보이스</span>
+    </div>
+  </div>
+  <div class="cbd" style="display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:start">
+    <div style="padding:14px 18px;border-right:1px solid var(--line)">
+      <div id="effMetrics" style="margin-top:4px"></div>
+      <div id="effSummary" style="margin-top:8px;background:#f0faf4;border:1px solid #b7e6c8;border-radius:8px;padding:10px;font-size:var(--fs-xs);color:#374151;line-height:1.7;display:none"></div>
+    </div>
+    <div style="padding:14px 18px;overflow-x:auto"><div id="costTableWrap"></div></div>
+  </div>
+</div>
+
+<!-- ⑦ 업계 벤치마크 비교 LLM (1×1 전체 폭) -->
+<div class="card" style="margin-bottom:14px" data-llm-card>
+  <div class="chd" style="background:linear-gradient(180deg,#faf5ff,#f3e8ff);border-bottom:2px solid #7c3aed">
+    <h3 style="color:#4c1d95;text-transform:uppercase;letter-spacing:.5px">업계 벤치마크 비교</h3>
+    <span class="tag tag-llm">인공지능 분석</span>
+  </div>
+  <div class="cbd">
+    <div class="narr mt0">
+{{llm:industry_benchmark|ref=db:mrv_activity_data.usage,db:mrv_activity_data.usage_unit,db:mrv_calculation_result.emission,db:mrv_calculation_result.emissions_unit,db:mrv_activity_data.activity_name,db:mrv_activity_data.facility,db:mrv_emission_factor_ref.emission_factor,db:mrv_emission_factor_ref.ef_source,db:mrv_emission_factor_ref.ef_tier,db:mrv_activity_data.inventory_year,db:chart_summary.total_cost,db:chart_summary.total_cost_unit,db:chart_summary.avg_efficiency,db:chart_summary.efficiency_unit}}
+    </div>
+  </div>
+</div>
+
+<!-- ⑧ 시나리오 예측 + 비교 테이블 (1×1 통합 카드) -->
+<div class="card" style="margin-bottom:14px">
+  <div class="chd">
+    <h3>차년도 연료 소비 시나리오 예측</h3>
+    <span class="tag">Forecast</span>
+  </div>
+  <div class="cbd">
+    <div id="scenarioLegend" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;font-size:var(--fs-xs)"></div>
+    <div class="chart-canvas-wrap" style="position:relative;height:240px;margin-bottom:20px">
+      <canvas id="chartScenario"></canvas>
+    </div>
+    <div style="border-top:2px solid var(--line);padding-top:14px">
+      <div style="font-size:var(--fs-sm);font-weight:var(--fw-heavy);color:var(--g900);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">시나리오 비교 요약</div>
+      <div id="scenarioTableWrap" style="overflow-x:auto"></div>
+      <div id="scenarioInsights" style="margin-top:10px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑦ 비용 절감 시나리오 분석 LLM (1×1 전체 폭) -->
+<div class="card" style="margin-bottom:14px" data-llm-card>
+  <div class="chd" style="background:linear-gradient(180deg,#faf5ff,#f3e8ff);border-bottom:2px solid #7c3aed">
+    <h3 style="color:#4c1d95;text-transform:uppercase;letter-spacing:.5px">비용 절감 시나리오 분석</h3>
+    <span class="tag tag-llm">인공지능 분석</span>
+  </div>
+  <div class="cbd">
+    <div class="narr mt0">
+{{llm:cost_reduction_analysis|ref=db:mrv_activity_data.usage,db:mrv_activity_data.usage_unit,db:mrv_calculation_result.emission,db:mrv_calculation_result.emissions_unit,db:mrv_activity_data.activity_name,db:mrv_activity_data.facility,db:mrv_emission_factor_ref.emission_factor,db:monthly_summary_text}}
+    </div>
+  </div>
+</div>
+
+<p class="small muted" style="margin-top:8px">
+  * 차트는 웹 HTML 뷰에서만 동작합니다. PDF / 인쇄본에서는 Section 2 테이블 데이터를 참조하세요.
+  데이터 출처: <code>mrv_activity_data_monthly</code> / <code>mrv_chart_data</code> (report_id: {{db:mrv_report.report_id}}).
+</p>
+
+
+</div>
+</section>
+
+<!-- ── Scope 1 데이터 JSON ── -->
+<script type="application/json" id="mrvChartData">{{db:chart_monthly_json}}</script>
+<script type="application/json" id="mrvCostData">{{db:chart_cost_json}}</script>
+<script type="application/json" id="mrvCostEstimated">{{db:chart_cost_estimated_json}}</script>
+<script type="application/json" id="mrvScenarioRates">{{db:chart_scenario_rates_json}}</script>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ══════════════════════════════════════════
+     0. "—" 카드 자동 숨김
+     ══════════════════════════════════════════ */
+  (function hideEmptyCards() {
+    // 파라미터 카드: 테이블 행의 값이 전부 "—" 이면 카드 전체 숨김
+    document.querySelectorAll('[data-param-card]').forEach(function(card) {
+      var tds = card.querySelectorAll('td:nth-child(2)');
+      var allEmpty = Array.prototype.every.call(tds, function(td) {
+        var t = td.textContent.trim();
+        return t === '—' || t === '' || t === '처리중...';
+      });
+      if (allEmpty) card.style.display = 'none';
+    });
+    // 계량기 카드: instrument_name이 "—"이면 숨김 (교정 데이터 없는 경우)
+    document.querySelectorAll('[data-param-card]').forEach(function(card) {
+      var title = (card.querySelector('span') || {}).textContent || '';
+      if (title.indexOf('계량기') !== -1) {
+        var valCells = card.querySelectorAll('td:nth-child(2)');
+        var dashCount = 0;
+        valCells.forEach(function(td){ if(td.textContent.trim()==='—') dashCount++; });
+        if (dashCount >= valCells.length - 1) card.style.display = 'none';
+      }
+    });
+
+    // KPI: .ck-val 텍스트가 "—" 이면 숨김
+    var kpiCards = document.querySelectorAll('[data-kpi]');
+    var visCount = 0;
+    kpiCards.forEach(function(card) {
+      var val = (card.querySelector('.ck-val') || {}).textContent || '';
+      if (val.trim() === '—') {
+        card.style.display = 'none';
+      } else {
+        visCount++;
+      }
+    });
+    // ── 총 연료 비용 KPI 카드: 실제 단가 → LLM 추정 순으로 총비용 주입
+    (function(){
+      var totalCost = 0, basis = '';
+      var ce = document.getElementById('mrvCostData'), cd = null;
+      if (ce) { try { cd = JSON.parse(ce.textContent.trim()); } catch(e) {} }
+      if (cd && cd.total_cost) {
+        totalCost = Number(cd.total_cost);
+        basis = '실제 인보이스';
+      } else {
+        var ee = document.getElementById('mrvCostEstimated'), ed = null;
+        if (ee) { try { ed = JSON.parse(ee.textContent.trim()); } catch(e) {} }
+        if (ed && ed.total_cost) {
+          totalCost = Number(ed.total_cost);
+          basis = 'LLM 추정';
+        }
+      }
+      if (totalCost > 0) {
+        var card = document.getElementById('kpiTotalCostCard');
+        var valEl = document.getElementById('kpiTotalCostVal');
+        var basisEl = document.getElementById('kpiTotalCostBasis');
+        if (card && valEl) {
+          // 1억 이상이면 억 단위로 표시
+          var display = totalCost >= 1e8
+            ? (totalCost / 1e8).toFixed(2) + '억'
+            : totalCost >= 1e4
+              ? (totalCost / 1e4).toFixed(1) + '만'
+              : Number(totalCost).toLocaleString();
+          valEl.textContent = display;
+          if (basisEl) basisEl.textContent = basis;
+          card.style.display = '';
+          visCount++;
+        }
+      }
+    })();
+
+    // 남은 KPI 수에 맞게 그리드 컬럼 재조정
+    var row = document.getElementById('kpiRow');
+    if (row && visCount > 0) {
+      row.style.gridTemplateColumns = 'repeat(' + visCount + ',1fr)';
+    }
+
+    // LLM 카드: .narr 텍스트가 "—" 또는 "LLM 실패" 이면 숨김 (LLM 결과 치환 후 판단)
+    // → DOMContentLoaded 이후에도 LLM 비동기 완료 시 다시 체크하므로 MutationObserver 사용
+    function checkLlmCards() {
+      document.querySelectorAll('[data-llm-card]').forEach(function(card) {
+        var narr = card.querySelector('.narr');
+        if (!narr) return;
+        var txt = narr.textContent.trim();
+        if (txt === '—' || txt === 'LLM 실패' || txt === '' || txt === '처리중...') {
+          card.style.display = 'none';
+        } else {
+          card.style.display = '';
+        }
+      });
+    }
+    checkLlmCards();
+    // LLM 타이핑 완료 후 재체크
+    var obs = new MutationObserver(checkLlmCards);
+    document.querySelectorAll('[data-llm-card] .narr').forEach(function(el) {
+      obs.observe(el, { childList: true, subtree: true, characterData: true });
+    });
+  })();
+
+  /* ══════════════════════════════════════════
+     1. 차트 데이터 로드
+     ══════════════════════════════════════════ */
+  var el = document.getElementById('mrvChartData');
+  if (!el) return;
+  var d;
+  try { d = JSON.parse(el.textContent.trim()); } catch (e) { return; }
+  if (!d || !Array.isArray(d.labels) || d.labels.length === 0) return;
+
+  /* ── 색상 팔레트 ── */
+  var C = {
+    g900: '#0f3d33', g800: '#12453a', g700: '#155144',
+    g600: '#1f8a70', g500: '#2eaf8c',
+    blue: '#2563eb', amber: '#d97706', red: '#dc2626',
+    purple: '#7c3aed', cyan: '#0891b2',
+    line: '#e5e7eb', muted: '#64748b',
+  };
+  var GRID = 'rgba(229,231,235,0.7)';
+
+  Chart.defaults.font.family = "'Noto Sans KR', sans-serif";
+  Chart.defaults.font.size   = 11;
+  Chart.defaults.color       = C.muted;
+  Chart.defaults.plugins.tooltip.backgroundColor = '#0f172a';
+  Chart.defaults.plugins.tooltip.titleColor      = '#f1f5f9';
+  Chart.defaults.plugins.tooltip.bodyColor       = '#cbd5e1';
+  Chart.defaults.plugins.tooltip.padding         = 10;
+  Chart.defaults.plugins.tooltip.cornerRadius    = 4;
+  Chart.defaults.plugins.legend.labels.usePointStyle   = true;
+  Chart.defaults.plugins.legend.labels.pointStyleWidth = 8;
+  Chart.defaults.plugins.legend.labels.padding         = 12;
+
+  var xScale = { grid: { color: GRID }, ticks: { font: { size: 10 } } };
+  var yBase  = { grid: { color: GRID }, ticks: { font: { size: 10 }, callback: function(v){ return v.toLocaleString(); } }, beginAtZero: true };
+
+  /* ── 파생값 계산 ── */
+  var fuelVals    = d.fuel || [];
+  var emVals      = d.emissions || [];
+  var cumEm       = d.cumulative_emissions || [];
+  var cumFuel     = d.cumulative_fuel || [];
+  var sharePct    = d.share_pct || [];
+  var fhVals      = d.operating_unit || d.flight_hours || [];
+  var opUnitLabel = d.operating_unit_label || '운영단위';
+  var opUnitUnit  = d.operating_unit_unit  || 'h';
+  var totalFuel   = d.total_fuel || fuelVals.reduce(function(s,v){ return s+v; }, 0);
+  var unit        = d.unit || '';
+  var emUnit      = d.emissions_unit || 'tCO₂e';
+
+  var hasOp      = fhVals.length === fuelVals.length && fuelVals.length > 0;
+  var isKm       = (opUnitUnit === 'km');
+  var isEnergy   = (['kWh','GJ','t','ton'].indexOf(opUnitUnit) >= 0);
+  var effScale   = isKm ? 100 : 1;
+  var effVals    = hasOp ? fuelVals.map(function(f,i){
+    if (fhVals[i] <= 0) return 0;
+    var r = f / fhVals[i] * effScale;
+    return isEnergy ? Math.round(r*1000)/1000 : Math.round(r*100)/100;
+  }) : [];
+  var totalOp    = hasOp ? fhVals.reduce(function(s,v){ return s+v; }, 0) : 0;
+  var rawAvg     = (hasOp && totalOp > 0) ? totalFuel / totalOp * effScale : 0;
+  var avgEff     = isEnergy ? Math.round(rawAvg*1000)/1000 : Math.round(rawAvg*100)/100;
+  var effUnit    = isKm ? (unit+'/100km') : (unit+'/'+opUnitUnit);
+
+  /* ═══════════════════════════════════════════════════
+     Chart 0 — Monthly Usage & Emissions (Dual Axis)
+     연료 소비 Bar (left) + CO₂e 배출량 Line (right)
+     ═══════════════════════════════════════════════════ */
+  (function(){
+    var ctx = document.getElementById('chartMonthlyDual');
+    if (!ctx) return;
+    var maxF = fuelVals.length ? Math.max.apply(null, fuelVals) : 0;
+    new Chart(ctx, {
+      data: {
+        labels: d.labels,
+        datasets: [
+          {
+            type: 'bar',
+            label: '연료 소비 (' + unit + ')',
+            data: fuelVals,
+            backgroundColor: fuelVals.map(function(v) {
+              return v === maxF ? C.amber : 'rgba(21,81,68,0.75)';
+            }),
+            borderColor: fuelVals.map(function(v) {
+              return v === maxF ? '#b45309' : C.g700;
+            }),
+            borderWidth: 1,
+            borderRadius: 3,
+            borderSkipped: false,
+            yAxisID: 'yFuel',
+            order: 2,
+          },
+          {
+            type: 'line',
+            label: '배출량 (' + emUnit + ')',
+            data: emVals,
+            borderColor: C.red,
+            backgroundColor: 'rgba(220,38,38,0.08)',
+            borderWidth: 2,
+            pointBackgroundColor: C.red,
+            pointBorderColor: '#fff',
+            pointBorderWidth: 1.5,
+            pointRadius: 4,
+            tension: 0.3,
+            fill: false,
+            yAxisID: 'yEmissions',
+            order: 1,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: { font: { size: 11 }, padding: 14, usePointStyle: true, pointStyleWidth: 8 }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                if (ctx.dataset.yAxisID === 'yEmissions')
+                  return '  ' + ctx.dataset.label + ': ' + Number(ctx.raw).toFixed(4);
+                return '  ' + ctx.dataset.label + ': ' + Number(ctx.raw).toLocaleString();
+              }
+            }
+          }
+        },
+        scales: {
+          x: { grid: { color: GRID }, ticks: { font: { size: 10 } } },
+          yFuel: {
+            position: 'left',
+            grid: { color: GRID },
+            ticks: { font: { size: 10 }, callback: function(v) { return v.toLocaleString(); } },
+            title: { display: true, text: unit, font: { size: 9 }, color: C.muted },
+            beginAtZero: true
+          },
+          yEmissions: {
+            position: 'right',
+            grid: { drawOnChartArea: false },
+            ticks: { font: { size: 10 } },
+            title: { display: true, text: emUnit, font: { size: 9 }, color: C.red },
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  })();
+
+  /* ═══════════════════════════════════
+     Chart 2 — 도넛: 월별 연료 비중
+     ═══════════════════════════════════ */
+  var ctxShare = document.getElementById('chartShare');
+  if (ctxShare && fuelVals.length) {
+    var dc = ['rgba(21,81,68,.82)','rgba(31,138,112,.82)','rgba(46,175,140,.82)',
+      'rgba(6,182,212,.82)','rgba(37,99,235,.82)','rgba(124,58,237,.82)',
+      'rgba(217,119,6,.82)','rgba(220,38,38,.82)','rgba(15,61,51,.82)',
+      'rgba(8,145,178,.72)','rgba(16,185,129,.72)','rgba(245,158,11,.88)'];
+    new Chart(ctxShare,{ type:'doughnut',
+      data:{ labels:d.labels, datasets:[{ data:fuelVals, backgroundColor:dc.slice(0,fuelVals.length), borderColor:'#fff', borderWidth:2, hoverOffset:8 }] },
+      options:{ responsive:true, cutout:'60%', plugins:{
+        legend:{ position:'right', labels:{ font:{ size:9 }, padding:6 } },
+        tooltip:{ callbacks:{ label:function(ctx){ var p=sharePct[ctx.dataIndex]||0; return '  '+Number(ctx.raw).toLocaleString()+' '+unit+' ('+p+'%)'; } } } } }
+    });
+    var sw = document.getElementById('shareMinMaxWrap');
+    if (sw) {
+      var mxI=fuelVals.indexOf(Math.max.apply(null,fuelVals));
+      var mnI=fuelVals.indexOf(Math.min.apply(null,fuelVals));
+      sw.innerHTML=
+        '<div style="background:#f0faf4;border:1px solid #b7e6c8;border-radius:8px;padding:8px;text-align:center">'
+        +'<div style="font-size:10px;color:#888;letter-spacing:.4px">최고 소비월</div>'
+        +'<div style="font-size:15px;font-weight:800;color:#d97706;margin:3px 0">'+d.labels[mxI]+'</div>'
+        +'<div style="font-size:10px;color:#555">'+Number(fuelVals[mxI]).toLocaleString()+' '+unit+'</div></div>'
+        +'<div style="background:#f0faf4;border:1px solid #b7e6c8;border-radius:8px;padding:8px;text-align:center">'
+        +'<div style="font-size:10px;color:#888;letter-spacing:.4px">최저 소비월</div>'
+        +'<div style="font-size:15px;font-weight:800;color:#1f8a70;margin:3px 0">'+d.labels[mnI]+'</div>'
+        +'<div style="font-size:10px;color:#555">'+Number(fuelVals[mnI]).toLocaleString()+' '+unit+'</div></div>';
+    }
+  }
+
+  /* ═══════════════════════════════════
+     효율 바 + 요약
+     ═══════════════════════════════════ */
+  var effEl = document.getElementById('effMetrics');
+  if (effEl) {
+    if (hasOp && effVals.length) {
+      var maxE=Math.max.apply(null,effVals), minE=Math.min.apply(null,effVals);
+      effVals.forEach(function(e,i){
+        var pct=maxE>0?Math.round((e/maxE)*100):50;
+        var col=e<=avgEff?C.g600:C.amber;
+        effEl.innerHTML+='<div class="eff-bar-row">'
+          +'<span class="eff-bar-label">'+(d.labels[i]||i+1)+'</span>'
+          +'<div class="eff-bar-track"><div class="eff-bar-fill" style="width:'+pct+'%;background:'+col+'"></div></div>'
+          +'<span class="eff-bar-val" style="color:'+col+'">'+e.toFixed(2)+' '+effUnit+'</span></div>';
+      });
+      var se=document.getElementById('effSummary');
+      if (se){ se.style.display='block';
+        se.innerHTML='기준선 <strong>'+avgEff.toFixed(2)+' '+effUnit+'</strong> · '
+          +'최고효율: <strong style="color:'+C.g600+'">'+minE.toFixed(2)+' '+effUnit+'</strong> ('+d.labels[effVals.indexOf(minE)]+') · '
+          +'최저효율: <strong style="color:'+C.amber+'">'+maxE.toFixed(2)+' '+effUnit+'</strong> ('+d.labels[effVals.indexOf(maxE)]+')';
+      }
+    } else {
+      // 운영단위 없음 → 효율 카드 전체 숨김
+      var ec=document.getElementById('effCard');
+      if (ec) ec.style.display='none';
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════
+     인보이스 테이블 — 실제 단가 → LLM 추정 → 사용량 폴백
+     ═══════════════════════════════════════════════════ */
+  (function(){
+    function makeTbl(mc, isEst, basis, totalCost, unitLabel) {
+      var tc = totalCost ? '₩' + Number(totalCost).toLocaleString() : '—';
+      var header = isEst
+        ? '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:7px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:6px">'
+          + '<span style="font-size:13px">⚡</span>'
+          + '<span style="font-size:11px;color:#92400e;font-weight:600">LLM 추정 단가 적용</span>'
+          + '<span style="font-size:10px;color:#b45309;margin-left:4px">근거: ' + (basis||'한국 시장 참고 단가') + '</span></div>'
+        : '';
+      return header
+        + '<table style="width:100%;border-collapse:collapse;font-size:11px;border:2px solid var(--line)">'
+        + '<thead><tr>'
+        + '<th style="background:var(--g800);color:#fff;padding:7px 10px;text-align:left">기간</th>'
+        + '<th style="background:var(--g800);color:#fff;padding:7px 10px;text-align:right">사용량 (' + unitLabel + ')</th>'
+        + '<th style="background:var(--g800);color:#fff;padding:7px 10px;text-align:right">' + (isEst ? '추정단가' : '단가') + ' (₩/' + unitLabel + ')</th>'
+        + '<th style="background:var(--g800);color:#fff;padding:7px 10px;text-align:right">' + (isEst ? '추정금액' : '금액') + ' (KRW)</th>'
+        + '</tr></thead><tbody>'
+        + mc.map(function(r, i) {
+            var bg = i % 2 === 0 ? '#fff' : '#f9fafb';
+            return '<tr style="background:' + bg + '">'
+              + '<td class="mono" style="padding:7px 10px;border-bottom:1px solid var(--line)">' + r.period_label + '</td>'
+              + '<td class="right mono" style="padding:7px 10px;border-bottom:1px solid var(--line)">' + Number(r.qty).toLocaleString() + '</td>'
+              + '<td class="right mono" style="padding:7px 10px;border-bottom:1px solid var(--line);color:' + (isEst ? '#d97706' : 'inherit') + '">₩' + Number(r.unit_price).toLocaleString() + '</td>'
+              + '<td class="right mono" style="padding:7px 10px;border-bottom:1px solid var(--line);font-weight:600">₩' + Number(r.cost).toLocaleString() + '</td>'
+              + '</tr>';
+          }).join('')
+        + '</tbody><tfoot><tr style="background:#f1f5f9">'
+        + '<td colspan="3" class="right mono" style="padding:8px 10px;font-weight:700;border-top:2px solid var(--line)">합계</td>'
+        + '<td class="right mono" style="padding:8px 10px;font-weight:700;border-top:2px solid var(--line);color:var(--g800)">' + tc + '</td>'
+        + '</tr></tfoot></table>';
+    }
+
+    var w = document.getElementById('costTableWrap');
+    if (!w) return;
+
+    // 1순위: 실제 인보이스 단가
+    var ce = document.getElementById('mrvCostData'), cd = null;
+    if (ce) { try { cd = JSON.parse(ce.textContent.trim()); } catch(e) {} }
+    if (cd && Array.isArray(cd.monthly_costs) && cd.monthly_costs.length > 0) {
+      w.innerHTML = makeTbl(cd.monthly_costs, false, null, cd.total_cost, unit);
+      return;
+    }
+
+    // 2순위: LLM 추정 단가
+    var estEl = document.getElementById('mrvCostEstimated'), ed = null;
+    if (estEl) { try { ed = JSON.parse(estEl.textContent.trim()); } catch(e) {} }
+    if (ed && Array.isArray(ed.monthly_costs) && ed.monthly_costs.length > 0) {
+      w.innerHTML = makeTbl(ed.monthly_costs, true, ed.basis, ed.total_cost, unit);
+      return;
+    }
+
+    // 3순위: 단가 없음 — 사용량만 표시
+    w.innerHTML = '<p style="font-size:11px;color:#d97706;margin-bottom:6px">※ 단가 미입력 — 연료 사용량 기준 표시</p>'
+      + '<table style="width:100%;border-collapse:collapse;font-size:11px;border:2px solid var(--line)">'
+      + '<thead><tr>'
+      + '<th style="background:var(--g800);color:#fff;padding:7px 10px;text-align:left">기간</th>'
+      + '<th style="background:var(--g800);color:#fff;padding:7px 10px;text-align:right">사용량 (' + unit + ')</th>'
+      + '</tr></thead><tbody>'
+      + d.labels.map(function(lbl, i) {
+          var bg = i % 2 === 0 ? '#fff' : '#f9fafb';
+          return '<tr style="background:' + bg + '"><td class="mono" style="padding:7px 10px;border-bottom:1px solid var(--line)">' + lbl + '</td>'
+            + '<td class="right mono" style="padding:7px 10px;border-bottom:1px solid var(--line)">' + Number(fuelVals[i]).toLocaleString() + '</td></tr>';
+        }).join('')
+      + '</tbody><tfoot><tr style="background:#f1f5f9">'
+      + '<td class="right mono" style="padding:8px 10px;font-weight:700;border-top:2px solid var(--line)">합계</td>'
+      + '<td class="right mono" style="padding:8px 10px;font-weight:700;border-top:2px solid var(--line)">' + Number(totalFuel).toLocaleString() + '</td>'
+      + '</tr></tfoot></table>';
+  })();
+
+  /* ═══════════════════════════════════════════════════════
+     Chart 8 — 차년도 시나리오 예측 + 비교 테이블
+     ═══════════════════════════════════════════════════════ */
+  if (fuelVals.length){
+    var srEl=document.getElementById('mrvScenarioRates');
+    var sr={ bau_rate:0.03, cut_rates:[-0.05,-0.10,-0.15], labels:['BAU +3%','-5%','-10%','-15%'] };
+    if (srEl){ try{ sr=JSON.parse(srEl.textContent.trim())||sr; }catch(e){} }
+
+    function mkS(r){ return fuelVals.map(function(v){ return Math.round(v*(1+r)); }); }
+    var ny=(function(){ var l=d.labels[0]||''; var m=l.match(/^(\d{4})/); return m?String(parseInt(m[1])+1):'차년도'; })();
+
+    var s0=fuelVals.slice(), s_bau=mkS(sr.bau_rate);
+    var csd=(sr.cut_rates||[]).map(mkS);
+    var csl=(sr.labels||[]).slice(1).map(function(l){ return ny+' '+l; });
+    var bauL=(sr.labels&&sr.labels[0])?sr.labels[0]:('BAU +'+Math.round(sr.bau_rate*100)+'%');
+    var scC=[C.g700,C.red,C.g500,C.blue,C.purple].slice(0,2+csd.length);
+    var scD=[[],[5,4],[4,3],[3,3],[2,3]].slice(0,2+csd.length);
+    var scL=['기준 실적',bauL].concat(csl);
+    var scDt=[s0,s_bau].concat(csd);
+
+    var le=document.getElementById('scenarioLegend');
+    if (le){ le.innerHTML=scL.map(function(l,i){
+      return '<span style="display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:18px;height:3px;background:'+scC[i]+';border-radius:2px"></span>'+l+'</span>';
+    }).join(''); }
+
+    var ctx8=document.getElementById('chartScenario');
+    if (ctx8){ new Chart(ctx8,{ type:'line',
+      data:{ labels:d.labels, datasets:scL.map(function(l,i){ return {
+        label:l, data:scDt[i], borderColor:scC[i],
+        backgroundColor:i===0?'rgba(21,81,68,0.06)':'transparent',
+        borderWidth:i===0?2.5:1.5, borderDash:scD[i],
+        pointRadius:i===0?4:3, pointBackgroundColor:scC[i], pointBorderColor:'#fff', pointBorderWidth:1, tension:0.35, fill:i===0,
+      }; }) },
+      options:{ responsive:true, interaction:{ mode:'index', intersect:false },
+        plugins:{ legend:{ display:false },
+          tooltip:{ callbacks:{ label:function(ctx){ return '  '+ctx.dataset.label+': '+Number(ctx.raw).toLocaleString()+' '+unit; } } } },
+        scales:{ x:xScale, y:{ grid:{ color:GRID }, ticks:{ font:{ size:10 }, callback:function(v){ return v.toLocaleString(); } }, beginAtZero:false } } }
+    }); }
+
+    var sw2=document.getElementById('scenarioTableWrap');
+    if (sw2){
+      function sumA(a){ return a.reduce(function(s,v){ return s+v; },0); }
+      var bt=sumA(s0);
+
+      // 단가 조회: 실제 인보이스 → LLM 추정 순
+      var avgUP = 0;
+      var costSrc = '';
+      (function(){
+        var ce2=document.getElementById('mrvCostData'), cd2=null;
+        if (ce2){ try{ cd2=JSON.parse(ce2.textContent.trim()); }catch(e){} }
+        if (cd2 && cd2.unit_price) { avgUP=Number(cd2.unit_price); costSrc='실제 단가'; return; }
+        var ee=document.getElementById('mrvCostEstimated'), ed2=null;
+        if (ee){ try{ ed2=JSON.parse(ee.textContent.trim()); }catch(e){} }
+        if (ed2 && ed2.unit_price) { avgUP=Number(ed2.unit_price); costSrc='LLM 추정 단가'; }
+      })();
+      var hasCostCol = avgUP > 0;
+
+      var thCost = hasCostCol
+        ? '<th class="right" style="background:var(--g800);color:#fff;padding:7px 10px;font-size:11px">절감 비용 (KRW)'
+          + (costSrc ? '<div style="font-size:9px;opacity:.7;font-weight:400">'+costSrc+'</div>' : '')
+          + '</th>'
+        : '';
+
+      sw2.innerHTML=
+        '<table style="width:100%;border-collapse:collapse;font-size:11px;border:2px solid var(--line)">'
+        +'<thead><tr>'
+        +'<th style="background:var(--g800);color:#fff;padding:7px 10px;text-align:left;font-size:11px">시나리오</th>'
+        +'<th class="right" style="background:var(--g800);color:#fff;padding:7px 10px;font-size:11px">연간 합계</th>'
+        +'<th class="right" style="background:var(--g800);color:#fff;padding:7px 10px;font-size:11px">절감량</th>'
+        +'<th class="right" style="background:var(--g800);color:#fff;padding:7px 10px;font-size:11px">절감률</th>'
+        + thCost
+        +'</tr></thead><tbody>'
+        +scL.map(function(l,i){
+          var tot=sumA(scDt[i]), diff=tot-bt;
+          var pct=bt>0?(diff/bt*100).toFixed(1):'0';
+          var ds=diff===0?'—':(diff>0?'+':'')+Number(diff).toLocaleString();
+          var ps=diff===0?'—':(diff>0?'+':'')+pct+'%';
+          var cl=diff<0?C.g600:diff>0?C.red:C.muted;
+          var bg=i%2===0?'#fff':'#f9fafb';
+          var tdCost='';
+          if (hasCostCol){
+            var saving=Math.round(-diff*avgUP);
+            var savStr=diff===0?'—':(saving>0?'':'+')+('₩'+Number(saving).toLocaleString());
+            var savCl=diff<0?C.g600:diff>0?C.red:C.muted;
+            tdCost='<td class="right mono" style="padding:7px 10px;border-bottom:1px solid var(--line);font-weight:700;color:'+savCl+'">'+savStr+'</td>';
+          }
+          return '<tr style="background:'+bg+'">'
+            +'<td style="padding:7px 10px;border-bottom:1px solid var(--line)">'
+            +'<span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:'+scC[i]+';margin-right:5px;vertical-align:middle"></span>'+l+'</td>'
+            +'<td class="right mono" style="padding:7px 10px;border-bottom:1px solid var(--line)">'+Number(tot).toLocaleString()+' '+unit+'</td>'
+            +'<td class="right mono" style="padding:7px 10px;border-bottom:1px solid var(--line);color:'+cl+'">'+ds+'</td>'
+            +'<td class="right mono" style="padding:7px 10px;border-bottom:1px solid var(--line);color:'+cl+'">'+ps+'</td>'
+            +tdCost+'</tr>';
+        }).join('')+'</tbody></table>';
+    }
+
+    var ie=document.getElementById('scenarioInsights');
+    if (ie&&fuelVals.length){
+      var mfi=fuelVals.indexOf(Math.max.apply(null,fuelVals));
+      var af=totalFuel/fuelVals.length;
+      var sp=af>0?((fuelVals[mfi]/af-1)*100).toFixed(1):'0';
+      var mcr=csd.length>0?Math.abs((sr.cut_rates||[-0.10]).slice(-1)[0]):0.10;
+      var mca=Math.round(bt*mcr);
+      var mcl=csl.length>0?csl.slice(-1)[0]:('-'+Math.round(mcr*100)+'%');
+      var costInsight='';
+      if (avgUP>0){
+        var maxSaving=Math.round(mca*avgUP);
+        costInsight=' · 추정 비용 절감: <strong style="color:'+C.g600+'">₩'+Number(maxSaving).toLocaleString()+'</strong>';
+      }
+      ie.innerHTML=
+        '<div class="insight-box"><div class="ib-title">📉 감축 레버</div>'
+        +'<div class="ib-body">'+mcl+' 시나리오 적용 시 연간 <strong>'+Number(mca).toLocaleString()+' '+unit+'</strong> 절감 가능'+costInsight+'.</div></div>'
+        +'<div class="insight-box"><div class="ib-title">⚠ 급증월 분석</div>'
+        +'<div class="ib-body"><strong>'+d.labels[mfi]+'</strong>월 소비가 월평균 대비 <strong>+'+sp+'%</strong>로 최고. 원인 파악 후 차년도 계획에 반영 권고.</div></div>';
+    }
+  }
+
+})();
+</script>

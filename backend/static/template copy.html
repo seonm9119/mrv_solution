@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+
+<html data-theme="light" lang="ko" style=""><head>
+<meta charset="utf-8"/>
+<title>Green-X · MRV Verification Submission Report</title>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<style>
+      :root {
+        --g950: #0b2f27;
+        --g900: #0f3d33;
+        --g800: #12453a;
+        --g700: #155144;
+        --g600: #1f8a70;
+        --bg: #ffffff;
+        --text: #0f172a;
+        --muted: #64748b;
+        --line: #e5e7eb;
+        --ok: #16a34a;
+        --warn: #f59e0b;
+        --bad: #ef4444;
+        --mono: 'Courier New', Courier, monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      html {
+        font-size: 13.0px;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Noto Sans KR', sans-serif;
+        font-size: 13.0px; /* Optimized for formal report */
+        line-height: 1.6;
+      }
+
+      /* Print Configuration */
+      @page {
+        size: A4;
+        margin: 20mm 18mm 25mm 18mm; /* Top Right Bottom Left */
+        @bottom-right {
+          content: "Page " counter(page);
+          font-size: 11.05px;
+          color: #64748b;
+          font-family: 'Noto Sans KR', sans-serif;
+        }
+        @bottom-left {
+          content: "Green-X MRV Report · {{db:mrv_report.report_id}}";
+          font-size: 11.05px;
+          color: #64748b;
+          font-family: 'Noto Sans KR', sans-serif;
+        }
+      }
+
+      @media print {
+        body {
+          width: 100%;
+          background: white;
+        }
+        .no-print {
+          display: none;
+        }
+        
+        /* Each section starts on new page but NO min-height to avoid blank pages */
+        .section {
+          break-before: page;
+          page-break-before: always;
+          break-inside: auto; /* Allow breaking if content is too long */
+          page-break-inside: auto;
+        }
+        
+        .section.first-section {
+          break-before: auto;
+          page-break-before: auto;
+        }
+        
+        /* Cards and tables try to stay together */
+        .card {
+          break-inside: avoid;
+          page-break-inside: avoid;
+          margin-bottom: 10px;
+        }
+        
+        /* Tables stay on one page */
+        table {
+          break-inside: avoid !important;
+          page-break-inside: avoid !important;
+        }
+        
+        .chk,
+        .kv-row,
+        .narr,
+        .siggrid {
+          break-inside: avoid;
+          page-break-inside: avoid;
+        }
+        
+        a {
+          text-decoration: none;
+          color: inherit;
+        }
+        
+        /* Hide page footer in print as we use @page margins */
+        .page-footer {
+          display: none;
+        }
+      }
+
+      /* Layout Containers */
+      .doc-container {
+        width: 100%;
+        max-width: 246.96mm; /* A4 width */
+        margin: 0 auto;
+        background: white;
+      }
+
+      /* Cover Page */
+      .cover {
+        border-radius: 0;
+        overflow: hidden;
+        border: 3px solid var(--g800);
+        background: #ffffff; /* White background for formal report */
+        color: var(--text);
+        margin-bottom: 0;
+        break-inside: avoid;
+        page-break-after: always;
+        break-after: page;
+      }
+
+      .cover-inner {
+        padding: 40px 35px;
+        position: relative;
+      }
+      
+      /* Top accent bar */
+      .cover-inner::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 8px;
+        background: linear-gradient(90deg, var(--g900), var(--g700), var(--g600));
+      }
+
+      .cover-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid var(--g800);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .logo {
+        width: 6rem;
+        height: 6rem;
+        border-radius: 0.9rem;
+        background: linear-gradient(135deg, var(--g800), var(--g700));
+        border: 0.22rem solid var(--g700);
+        display: grid;
+        place-items: center;
+        font-weight: 900;
+        font-size: 2.15rem;
+        letter-spacing: 0.04em;
+        color: #ffffff;
+        box-shadow: 0 0.6rem 1.4rem rgba(21, 81, 68, 0.30);
+      }
+
+      .cover h1 {
+        margin: 0;
+        font-size: 34.45px;
+        font-weight: 900;
+        letter-spacing: -0.8px;
+        line-height: 1.2;
+        color: var(--g900);
+      }
+
+      .sub {
+        margin-top: 12px;
+        font-size: 18.85px;
+        color: var(--g700);
+        font-weight: 600;
+        line-height: 1.4;
+      }
+
+      .meta {
+        text-align: right;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-end;
+      }
+      .meta.meta-row {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 12px;
+        margin-top: 18px;
+        margin-bottom: 18px;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 14px;
+        border-radius: 4px;
+        background: #f8fafc;
+        border: 2px solid var(--g700);
+        font-size: 13.65px;
+        font-weight: 800;
+        color: var(--g900);
+        letter-spacing: 0.3px;
+      }
+      
+      .chip b {
+        color: var(--g800);
+        font-weight: 900;
+      }
+
+      .cover-bottom {
+        padding-top: 20px;
+        border-top: 2px solid var(--line);
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .pill {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        border-radius: 4px;
+        background: #f8fafc;
+        border: 2px solid var(--line);
+        font-size: 13.65px;
+        color: var(--text);
+      }
+      .pill .k {
+        color: var(--muted);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 12.35px;
+        letter-spacing: 0.5px;
+      }
+      .pill .v {
+        font-weight: 800;
+        color: var(--g800);
+      }
+
+      /* Sections */
+      .section {
+        margin-top: 0;
+        margin-bottom: 15px;
+        border: 2px solid var(--line);
+        border-radius: 0;
+        overflow: visible;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      }
+
+      .hd {
+        padding: 14px 20px;
+        border-bottom: 2px solid var(--g700);
+        background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .title {
+        margin: 0;
+        font-size: 18.85px;
+        font-weight: 900;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--g900);
+        letter-spacing: -0.3px;
+      }
+
+      .secno {
+        width: 37.63px;
+        height: 32px;
+        border-radius: 4px;
+        display: grid;
+        place-items: center;
+        background: var(--g700);
+        color: #fff;
+        font-size: 16.25px;
+        font-weight: 900;
+        border: 2px solid var(--g800);
+      }
+
+      .tag {
+        font-size: 12.35px;
+        font-weight: 900;
+        padding: 5px 12px;
+        border-radius: 4px;
+        color: #fff;
+        background: var(--g700);
+        border: 1px solid var(--g800);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .bd {
+        padding: 16px 18px 18px;
+      }
+
+      /* Grid Layout for Print - Simplified to 2 columns mostly */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px; /* Reduced gap */
+      }
+      .span-12 {
+        grid-column: span 2;
+      }
+      .span-8 {
+        grid-column: span 2;
+      } /* Full width on print usually safer */
+      .span-4 {
+        grid-column: span 2;
+      } /* Unless very small items */
+      .span-6 {
+        grid-column: span 1;
+      }
+
+      /* Card/Block Styles */
+      .card {
+        border: 2px solid var(--line);
+        border-radius: 0;
+        background: #fff;
+        height: auto;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        margin-bottom: 12px; /* Reduced spacing */
+      }
+
+      .chd {
+        padding: 10px 16px;
+        border-bottom: 2px solid var(--line);
+        background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .chd h3 {
+        margin: 0;
+        font-size: 14.95px;
+        font-weight: 900;
+        color: var(--g900);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+
+      .cbd {
+        padding: 12px;
+      }
+
+      /* Key-Value Pairs */
+      .kv {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .kv-row {
+        display: flex;
+        border-bottom: 1px dashed var(--line);
+        padding-bottom: 4px;
+        margin-bottom: 4px;
+      }
+      .kv-row:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+      }
+
+      .kv-row .k {
+        width: 164.64px;
+        flex-shrink: 0;
+        color: var(--muted);
+        font-weight: 700;
+        font-size: 12.35px;
+      }
+      .kv-row .v {
+        font-weight: 600;
+        font-size: 13.65px;
+        color: var(--text);
+      }
+
+      /* Tables */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12.35px;
+        border: 2px solid var(--line);
+        margin-bottom: 12px;
+      }
+      th {
+        text-align: left;
+        background: var(--g800);
+        color: #fff;
+        font-weight: 900;
+        padding: 8px 10px;
+        border-bottom: 2px solid var(--g900);
+        border-right: 1px solid rgba(255,255,255,0.2);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        font-size: 11.05px;
+      }
+      th:last-child {
+        border-right: none;
+      }
+      td {
+        padding: 8px 10px;
+        border-bottom: 1px solid var(--line);
+        border-right: 1px solid #f1f5f9;
+        vertical-align: top;
+        background: #fff;
+      }
+      td:last-child {
+        border-right: none;
+      }
+      tr:last-child td {
+        border-bottom: 2px solid var(--line);
+      }
+      tbody tr:nth-child(even) td {
+        background: #f9fafb;
+      }
+      tbody tr:hover td {
+        background: #f1f5f9;
+      }
+      .mono {
+        font-family: var(--mono);
+      }
+      .right {
+        text-align: right;
+      }
+      .nowrap {
+        white-space: nowrap;
+      }
+
+      /* Narrative Text */
+      .narr {
+        background: #f8fafc;
+        border-left: 4px solid var(--g700);
+        border-radius: 0;
+        padding: 14px 16px;
+        font-size: 13.0px;
+        line-height: 1.7;
+        color: #1e293b;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      }
+      .narr .label {
+        font-weight: 900;
+        color: var(--g900);
+        margin-bottom: 8px;
+        display: block;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        font-size: 12.35px;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 4px;
+      }
+      .bullets {
+        margin: 8px 0 0;
+        padding-left: 20px;
+      }
+      .bullets li {
+        margin-bottom: 4px;
+        line-height: 1.6;
+      }
+
+      /* Badges - Simplified for formal report (no box, just color text) */
+      .badge {
+        display: inline-block;
+        padding: 0;
+        border-radius: 0;
+        font-size: 12.35px;
+        font-weight: 900;
+        border: none;
+        background: transparent;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .badge.ok {
+        color: #16a34a;
+      }
+      .badge.warn {
+        color: #f59e0b;
+      }
+      .badge.info {
+        color: #3b82f6;
+      }
+      .badge.bad {
+        color: #ef4444;
+      }
+      .badge.required {
+        color: #16a34a;
+      }
+      .badge.optional {
+        color: #3b82f6;
+      }
+
+      /* Signature Area */
+      .siggrid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+      .sig {
+        border: 1px solid var(--line);
+        padding: 10px;
+        border-radius: 6px;
+      }
+      .sig .k {
+        font-size: 12.35px;
+        color: var(--muted);
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+      .sig .v {
+        font-size: 14.95px;
+        font-weight: 700;
+        margin-top: 4px;
+        height: 20px;
+      }
+      .sig-img-placeholder {
+        height: 40px;
+        background: #f8fafc;
+        border: 1px dashed #cbd5e1;
+        margin: 8px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #94a3b8;
+        font-size: 11.05px;
+      }
+      .sig .line {
+        border-top: 1px solid var(--line);
+        padding-top: 6px;
+        font-size: 12.35px;
+        display: flex;
+        justify-content: space-between;
+        color: var(--muted);
+      }
+
+      /* Flow Diagram Placeholder */
+      .diagram-box {
+        border: 1px dashed var(--line);
+        background: #f8fafc;
+        padding: 15px;
+        border-radius: 8px;
+      }
+      .flow-steps {
+        display: flex;
+        gap: 10px;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      .flow-step {
+        flex: 1;
+        background: white;
+        border: 1px solid var(--line);
+        padding: 8px;
+        border-radius: 6px;
+        font-size: 12.35px;
+      }
+      .flow-arrow {
+        align-self: center;
+        color: var(--muted);
+        font-weight: bold;
+      }
+
+      /* Footer for Print */
+      .page-footer {
+        margin-top: 20px;
+        padding-top: 10px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        font-size: 11.05px;
+        color: var(--muted);
+      }
+    /* --- Utilities --- */
+.muted { color: var(--muted); }
+.small { font-size: 11.05px; }
+.tiny { font-size: 9.75px; }
+.hr { height: 1px; background: var(--line); margin: 10px 0; }
+.pb { padding-bottom: 6px; }
+.mt-6 { margin-top: 6px; }
+.mt-8 { margin-top: 8px; }
+.mt-10 { margin-top: 10px; }
+.mt-12 { margin-top: 12px; }
+.note { background:#f8fafc; border-left:4px solid var(--g700); padding:10px 12px; }
+
+      /* Layout: single column for print */
+      .grid { display: grid !important; grid-template-columns: 1fr !important; gap: 12px; }
+      .span-12, .span-8, .span-6, .span-4 { grid-column: span 1 !important; }
+
+      /* Tables & overflow */
+      .table-wrap, .table-responsive, .mrv-table-wrap { max-width: 100%; overflow-x: auto; }
+      table { width: 100%; border-collapse: collapse; table-layout: auto; }
+      th { white-space: nowrap; word-break: keep-all; }
+      td { white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
+      pre, code { white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; max-width: 100%; }
+
+      /* Cards: no overflow, wrap text */
+      .card, .card * { box-sizing: border-box; max-width: 100%; }
+      .card { overflow: hidden; }
+      .card .cbd, .card .chd { overflow: hidden; }
+      .card .narr, .card .small, .card .mono, .card p, .card li, .card td, .card div { overflow-wrap: anywhere; word-break: break-word; }
+      .narr, .llm-box, .narrative-box, .content-box { white-space: normal; overflow-wrap: normal; word-break: keep-all; }
+      .mono { white-space: normal; }
+
+      .grid > *, .card, .cbd, .chd, .siggrid, .sig { min-width: 0; }
+      .siggrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+      .sig .v, .sig .line, .sig .k { min-width: 0; }
+      .card-content, .card-body, .section-body, .content, .panel-body { min-width: 0; }
+    </style>
+</head>
+<body style="font-size: 14px">
+<div class="doc-container">
+<header class="cover">
+<div class="cover-inner">
+<div class="cover-top">
+<div class="brand">
+<div class="logo">GX</div>
+<div>
+<h1>MRV Verification Submission Package</h1>
+<div class="sub">{{db:mrv_document_metadata.organization_name}}</div>
+</div>
+</div>
+</div>
+<div class="meta meta-row">
+<div class="chip">ID: <b>{{db:mrv_report.report_id}}</b></div>
+<div class="chip">Ver: <b>{{db:mrv_report.report_version}}</b></div>
+<div class="chip">Date: <b>{{db:mrv_document_metadata.prepared_date}}</b></div>
+</div>
+<div style="font-size: 17.5px; margin-bottom: 20px; color: var(--g800); font-weight: 700; padding: 12px; background: #f1f5f9; border-left: 4px solid var(--g700);">
+  <b>Inventory Year {{db:mrv_activity_data.inventory_year}}</b>
+  · {{db:mrv_calculation_result.scope}}
+  · {{db:mrv_activity_data.activity_name}}
+  — {{db:mrv_report.asset_name}} {{db:mrv_activity_data.facility}}
+</div>
+<div class="cover-bottom">
+<div class="pill"><span class="k">Period</span> <span class="v mono">{{db:mrv_activity_data.start_date}} ~ {{db:mrv_activity_data.end_date}}</span></div>
+<div class="pill"><span class="k">Standard/Protocol</span> <span class="v">{{db:mrv_calculation_result.standard_protocol}}</span></div>
+<div class="pill"><span class="k">Org Boundary</span> <span class="v">{{db:mrv_report.org_boundary_type}}</span></div>
+<div class="pill"><span class="k">Verification</span> <span class="v">{{db:mrv_calculation_result.verification_level}}</span></div>
+</div>
+</div>
+</header>
+<section class="section" id="secVS">
+<div class="hd">
+<h2 class="title"><span class="secno">VS</span>검증 개요 (Verification Overview)</h2>
+</div>
+<div class="bd">
+<div class="grid">
+<div class="card span-4">
+<div class="chd"><h3>Submission Flags</h3></div>
+<div class="cbd">
+<div class="table-wrap"><table>
+<tbody>
+<tr><th style="width: 223.44px">Program / Regime</th><td><b>{{db:mrv_report.program_regime}}</b></td></tr>
+<tr><th>Verification Standard</th><td>{{db:mrv_report.verification_standard}}</td></tr>
+<tr><th>Inventory Standard</th><td>{{db:mrv_report.inventory_standard}}</td></tr>
+<tr><th>Materiality</th><td>{{db:mrv_document_metadata.materiality_threshold}}</td></tr>
+<tr><th>Site Visit</th><td>{{db:mrv_report.site_visit_type}}</td></tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="card span-8">
+<div class="chd">
+<h3>패키지 구성요소 (필수)</h3>
+</div>
+<div class="cbd">
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+  <tr>
+    <td>Inventory Boundary 정의</td>
+    <td>
+      {{llm:qc_note_boundary
+        |ref=db:mrv_activity_data.facility,db:mrv_report.org_boundary_type
+        |file=db:mrv_files.original_filename
+      }}
+    </td>
+  </tr>
+  
+  <tr>
+    <td>Activity Data 및 집계 근거</td>
+    <td>
+      {{llm:qc_note_activity
+        |ref=db:mrv_activity_data.usage,db:mrv_activity_data.usage_unit,db:mrv_activity_data.start_date,db:mrv_activity_data.end_date
+        |file=db:mrv_files.original_filename
+      }}
+    </td>
+  </tr>
+  
+  <tr>
+    <td>Emission Factor 근거 및 선택 사유</td>
+    <td>
+      {{llm:qc_note_ef
+        |ref=db:mrv_emission_factor_ref.emission_factor,db:mrv_emission_factor_ref.emission_factor_unit,db:mrv_emission_factor_ref.ef_source,db:mrv_emission_factor_ref.ef_version
+        |file=db:mrv_files.original_filename
+      }}
+    </td>
+  </tr>
+  
+  <tr>
+    <td>산정식/단위/반올림 규칙</td>
+    <td>
+      {{llm:qc_note_calc
+        |ref=db:mrv_calculation_result.formula,db:mrv_calculation_result.rounding_rule
+        |file=db:mrv_files.standardized_name
+      }}
+    </td>
+  </tr>
+  
+  <tr>
+    <td>QA/QC(검토·승인·이상치 처리)</td>
+    <td>
+      {{llm:qc_note_qaqc
+        |ref=db:mrv_document_metadata.instrument_id,db:mrv_document_metadata.calibration_date
+        |file=db:mrv_files.original_filename
+      }}
+    </td>
+  </tr>
+  
+  <tr>
+    <td>불확도(가능 시) 또는 DQ 설명</td>
+    <td>
+      {{llm:qc_note_uncertainty
+        |ref=db:mrv_document_metadata.materiality_threshold
+        |file=db:mrv_files.original_filename
+      }}
+    </td>
+  </tr>
+  
+  <tr>
+    <td>Evidence Register(증빙 목록)</td>
+    <td>
+      {{llm:qc_note_evidence
+        |ref=db:mrv_report.report_id
+        |file=db:mrv_files.original_filename
+      }}
+    </td>
+  </tr>
+  
+  <tr>
+    <td>Change Log(변경 이력)</td>
+    <td>
+      {{llm:qc_note_changelog
+        |ref=db:mrv_report.report_version
+        |file=db:mrv_files.original_filename
+      }}
+    </td>
+  </tr>
+  </tbody>
+  
+</table></div>
+<p class="small muted" style="margin-top:10px">
+  검증기관 제출은 보통 "보고서 + 증빙팩(Evidence Pack) + 인터뷰/질의응답"으로 진행됩니다.
+  모든 증빙은 Evidence Register에 ID로 정리되어 있으며, 본문과 상호 참조됩니다.
+</p>
+</div>
+</div>
+<div class="card span-4">
+<div class="chd">
+<h3>검증 요약 (LLM 작성 가능)</h3>
+</div>
+<div class="cbd">
+<div class="narr mt0">
+
+{{llm:submission_summary|​ref=db:mrv_document_metadata.organization_name,db:mrv_activity_data.inventory_year,db:mrv_activity_data.activity_name,db:mrv_activity_data.facility,db:mrv_activity_data.usage,db:mrv_activity_data.usage_unit,db:mrv_calculation_result.emission,db:mrv_calculation_result.emissions_unit,db:mrv_report.report_id}}
+
+
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="section" id="sec1">
+<div class="hd">
+<h2 class="title"><span class="secno">1</span>Inventory Boundary 정의 (Boundary Definition)</h2>
+</div>
+<div class="bd">
+<div class="grid">
+<div class="card span-6">
+<div class="chd"><h3>보고 목적</h3></div>
+<div class="cbd">
+<div class="narr mt0">
+  본 보고서는 {{db:mrv_activity_data.inventory_year}}년도 {{db:mrv_report.program_regime}} 제출 및 제3자 검증을 목적으로 작성되었습니다.
+</div>
+</div>
+</div>
+<div class="card span-6">
+<div class="chd"><h3>적용 기준/프로토콜</h3></div>
+<div class="cbd">
+<div class="kv">
+<div class="kv-row"><div class="k">Standard/Protocol</div><div class="v">{{db:mrv_calculation_result.standard_protocol}}</div></div>
+<div class="kv-row"><div class="k">Reporting Period</div><div class="v mono">{{db:mrv_activity_data.start_date}} ~ {{db:mrv_activity_data.end_date}}</div></div>
+<div class="kv-row"><div class="k">Base Year</div><div class="v mono">{{db:mrv_report.base_year}}</div></div>
+<div class="kv-row"><div class="k">Materiality Threshold</div><div class="v">{{db:mrv_document_metadata.materiality_threshold}}</div></div>
+<div class="kv-row"><div class="k">Verification Type/Level</div><div class="v">{{db:mrv_calculation_result.verification_level}}</div></div>
+</div>
+</div>
+</div>
+<div class="card span-12">
+<div class="chd"><h3>보고 원칙 (Reporting Principles)</h3></div>
+<div class="cbd">
+<div class="narr mt0">
+
+{{llm:reporting_principles|ref=db:mrv_calculation_result.standard_protocol,db:mrv_report.program_regime,db:mrv_document_metadata.materiality_threshold,db:mrv_calculation_result.verification_level,db:mrv_activity_data.inventory_year}}
+
+</div>
+<div class="small muted" style="margin-top:10px">
+  * ISO 14064-1 5대 원칙: 관련성(Relevance), 완전성(Completeness), 일관성(Consistency), 투명성(Transparency), 정확성(Accuracy)
+</div>
+</div>
+</div>
+<div class="card span-12">
+<div class="chd"><h3>범위 요약 (LLM 작성 가능)</h3></div>
+<div class="cbd">
+<div class="narr mt0">
+
+{{llm:scope_narrative|​ref=db:mrv_report.org_boundary_type,db:mrv_report.org_boundary_approach,db:mrv_report.scopes_excluded,db:mrv_document_metadata.materiality_threshold,db:mrv_calculation_result.verification_level,db:mrv_calculation_result.standard_protocol,db:mrv_activity_data.inventory_year}}
+
+</div>
+</div>
+</div>
+</div>
+<div class="grid">
+<div class="card span-6">
+<div class="chd"><h3>조직 경계</h3></div>
+<div class="cbd">
+<div class="kv">
+<div class="kv-row"><div class="k">Organizational Boundary Type</div><div class="v">{{db:mrv_report.org_boundary_type}}</div></div>
+<div class="kv-row"><div class="k">Approach</div><div class="v">{{db:mrv_report.org_boundary_approach}}</div></div>
+<div class="kv-row"><div class="k">Included Entities/Sites</div><div class="v">{{db:mrv_report.included_entities_sites}}</div></div>
+<div class="kv-row"><div class="k">Excluded Entities/Sites</div><div class="v">{{db:mrv_report.excluded_entities_sites}}</div></div>
+</div>
+</div>
+</div>
+<div class="card span-6">
+<div class="chd"><h3>운영 경계</h3></div>
+<div class="cbd">
+<div class="kv">
+<div class="kv-row"><div class="k">Operational Boundary Type</div><div class="v">{{db:mrv_report.operational_boundary_type}}</div></div>
+<div class="kv-row"><div class="k">Scopes Included</div><div class="v">{{db:mrv_report.scopes_included}}</div></div>
+<div class="kv-row"><div class="k">Scopes Excluded</div><div class="v">{{db:mrv_report.scopes_excluded}}</div></div>
+<div class="kv-row"><div class="k">Justification (if any)</div><div class="v">{{llm:boundary_justification|ref=db:mrv_report.operational_boundary_type,db:mrv_report.scopes_included,db:mrv_report.scopes_excluded,db:mrv_activity_data.facility,db:mrv_activity_data.inventory_year}}</div></div>
+</div>
+</div>
+</div>
+<div class="card span-12">
+<div class="chd"><h3>경계 설명 (LLM 작성 가능)</h3></div>
+<div class="cbd">
+<div class="narr mt0">
+
+{{llm:boundary_narrative|​ref=db:mrv_report.org_boundary_type,db:mrv_report.included_entities_sites,db:mrv_report.excluded_entities_sites,db:mrv_report.operational_boundary_type,db:mrv_report.scopes_included,db:mrv_report.scopes_excluded,db:mrv_activity_data.facility,db:mrv_activity_data.inventory_year}}
+</div>
+</div>
+</div>
+</div>
+<div class="grid">
+<div class="card span-12">
+<div class="chd"><h3>Data Flow Diagram</h3></div>
+<div class="cbd">
+<div class="diagram-box">
+  <strong>Source</strong><br/>
+  {{db:mrv_activity_data.data_source}}
+  <br/><br/>→<br/><br/>
+
+  <strong>Collection</strong><br/>
+  {{db:mrv_activity_data.data_collection_process}}
+  <br/><br/>→<br/><br/>
+
+  <strong>Processing</strong><br/>
+  {{llm:data_processing_steps
+    |ref=db:mrv_activity_data.data_source,db:mrv_activity_data.data_collection_process,db:mrv_activity_data.aggregation_basis
+  }}
+</div>
+<div class="small muted" style="margin-top:10px">
+  * 실제 제출 시: 시스템명/계측기ID/파일 경로/변환 로직(규칙) 및 담당자 정보를 포함 권장
+</div>
+</div>
+</div>
+<div class="card span-6">
+<div class="chd"><h3>변환/정제 규칙 (ETL)</h3></div>
+<div class="cbd">
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="width: 164.64px">Step</th>
+<th>Rule</th>
+<th style="width: 188.16px">Owner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>{{db:mrv_activity_data.data_collection_process}}</td>
+  <td>
+    {{db:mrv_activity_data.facility}} {{db:mrv_report.asset_name}}의 활동자료를
+    {{db:mrv_activity_data.etl_sources}}에서 수집
+  </td>
+  <td>{{db:mrv_report.data_owner}}</td>
+</tr>
+<tr>
+  <td>{{db:mrv_report.etl_transform_ops}}</td>
+  <td>
+    {{db:mrv_activity_data.period_unit}} 자료를
+    {{db:mrv_report.etl_transform_ops}}하여
+    {{db:mrv_activity_data.etl_output}} 산출
+  </td>
+  <td>{{db:mrv_report.data_owner}}</td>
+</tr>
+<tr>
+  <td>{{db:mrv_document_metadata.etl_checks}}</td>
+  <td>
+    {{db:mrv_document_metadata.etl_checks}}로 교차검증하고
+    이상치/결측을 {{db:mrv_report.etl_handling_rule}}에 따라 처리
+  </td>
+  <td>{{db:mrv_report.data_owner}}</td>
+</tr>
+<tr>
+  <td>{{db:mrv_activity_data.etl_output}}</td>
+  <td>
+    확정값을 {{db:mrv_activity_data.etl_output}} 입력값으로 사용
+  </td>
+  <td>{{db:mrv_report.data_owner}}</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="card span-6">
+<div class="chd"><h3>데이터 통제 (Access/Retention)</h3></div>
+<div class="cbd">
+<div class="kv">
+<div class="kv-row"><div class="k">Data Owner</div><div class="v">{{db:mrv_report.data_owner}}</div></div>
+<div class="kv-row"><div class="k">Retention Policy</div><div class="v">{{db:mrv_report.retention_policy}}</div></div>
+<div class="kv-row"><div class="k">Access Control</div><div class="v">{{db:mrv_report.access_control}}</div></div>
+<div class="kv-row"><div class="k">Audit Trail Location</div><div class="v mono">{{db:mrv_report.audit_trail_location}}</div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="section" id="sec2">
+<div class="hd">
+<h2 class="title"><span class="secno">2</span>Activity Data 및 집계 근거 (Activity Data &amp; Aggregation)</h2>
+</div>
+<div class="bd">
+<div class="card span-12">
+<div class="chd"><h3>필수 업로드 파일 (Activity Data 섹션)</h3></div>
+<div class="cbd">
+<div class="table-wrap"><table class="file-list">
+<thead>
+<tr>
+<th style="width: 28%">항목</th>
+<th style="width: 22%">예시 파일명</th>
+<th>용도</th>
+<th style="width: 120px">비고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>{{db:mrv_report_activity_uploads.display_monthly_raw}}</strong></td>
+<td class="mono">{{db:mrv_report_activity_uploads.file_monthly_raw}}</td>
+<td>{{db:mrv_activity_data.period_unit}} 단위 활동자료 · 월별 테이블 작성 근거</td>
+<td>{{db:mrv_report_activity_uploads.remark_monthly_raw_badge}}<br/><span class="small muted">{{db:mrv_report_activity_uploads.remark_monthly_raw_detail}}</span></td>
+</tr>
+<tr>
+<td><strong>{{db:mrv_report_activity_uploads.display_annual_report}}</strong></td>
+<td class="mono">{{db:mrv_report_activity_uploads.file_annual_report}}</td>
+<td>{{db:mrv_report_activity_uploads.purpose_annual_report}}</td>
+<td>{{db:mrv_report_activity_uploads.remark_annual_report}}</td>
+</tr>
+<tr>
+<td><strong>{{db:mrv_report_activity_uploads.display_operation_log}}</strong></td>
+<td class="mono">{{db:mrv_report_activity_uploads.file_operation_log}}</td>
+<td>{{db:mrv_report_activity_uploads.purpose_operation_log}}</td>
+<td>{{db:mrv_report_activity_uploads.remark_operation_log_badge}}<br/><span class="small muted">{{db:mrv_report_activity_uploads.remark_operation_log_detail}}</span></td>
+</tr>
+<tr>
+<td><strong>{{db:mrv_report_activity_uploads.display_ef_ref}}</strong></td>
+<td class="mono">{{db:mrv_report_activity_uploads.file_ef_ref}}</td>
+<td>배출계수 {{db:mrv_emission_factor_ref.emission_factor}} {{db:mrv_emission_factor_ref.emission_factor_unit}} 의 공식 출처</td>
+<td>{{db:mrv_report_activity_uploads.remark_ef_required}}</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="card span-12">
+<div class="chd"><h3>Monthly Usage &amp; Emissions</h3></div>
+<div class="cbd">
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="width: 129.36px">Month</th>
+<th class="right" style="width: 164.64px">Fuel Usage ({{db:mrv_activity_data.usage_unit}})</th>
+<th class="right" style="width: 164.64px">EF ({{db:mrv_emission_factor_ref.emission_factor_unit}})</th>
+<th class="right" style="width: 188.16px">Emissions ({{db:mrv_calculation_result.emissions_unit}})</th>
+<th class="right" style="width: 164.64px">Emissions (tCO₂e)</th>
+<th style="width: 199.92px">DQ / Outlier</th>
+</tr>
+</thead>
+<tbody>
+{{db:monthly_usage_emissions_rows}}
+</tbody>
+<tfoot>
+  <tr>
+    <th>Total</th>
+    <th class="right mono">{{db:mrv_activity_data.annual_fuel_usage_nm3}}</th>
+    <th class="right mono">{{db:mrv_emission_factor_ref.emission_factor}}</th>
+    <th class="right mono">{{db:mrv_calculation_result.annual_emissions_tco2e}}</th>
+    <th class="right mono"><b>{{db:mrv_calculation_result.annual_emissions_tco2e}}</b></th>
+    <th></th>
+  </tr>
+</tfoot>
+</table></div>
+<div class="narr" style="margin-top:12px">
+
+{{llm:reconciliation_checks|​ref=db:mrv_activity_data.aggregation_basis,db:mrv_activity_data.outlier_rule,db:mrv_activity_data.missing_data_rule,db:mrv_activity_data.reconciliation_rule,db:mrv_activity_data.usage,db:mrv_activity_data.usage_unit}}
+
+
+</div>
+</div>
+</div>
+<div class="grid">
+<div class="card span-6">
+<div class="chd"><h3>Activity Definition</h3></div>
+<div class="cbd">
+<div class="kv">
+<div class="kv-row"><div class="k">Activity Name</div><div class="v">{{db:mrv_activity_data.activity_name}}</div></div>
+<div class="kv-row"><div class="k">Facility/Process/Site</div><div class="v">{{db:mrv_activity_data.facility}}</div></div>
+<div class="kv-row"><div class="k">Data Period</div><div class="v mono">{{db:mrv_activity_data.start_date}} ~ {{db:mrv_activity_data.end_date}}</div></div>
+<div class="kv-row"><div class="k">Unit</div><div class="v">{{db:mrv_activity_data.usage_unit}}</div></div>
+<div class="kv-row"><div class="k">Total Usage</div><div class="v mono">{{db:mrv_activity_data.usage}}</div></div>
+</div>
+</div>
+</div>
+<div class="card span-6">
+<div class="chd"><h3>Aggregation Method</h3></div>
+<div class="cbd">
+<div class="kv">
+<div class="kv-row"><div class="k">Aggregation Basis</div><div class="v">{{db:mrv_activity_data.aggregation_basis}}</div></div>
+<div class="kv-row"><div class="k">Outlier Rule</div><div class="v">{{db:mrv_activity_data.outlier_rule}}</div></div>
+<div class="kv-row"><div class="k">Missing Data Rule</div><div class="v">{{db:mrv_activity_data.missing_data_rule}}</div></div>
+<div class="kv-row"><div class="k">Reconciliation (if any)</div><div class="v">{{db:mrv_activity_data.reconciliation_rule}}</div></div>
+</div>
+<div class="narr">
+
+{{llm:aggregation_narrative|​ref=db:mrv_activity_data.aggregation_basis,db:mrv_activity_data.outlier_rule,db:mrv_activity_data.missing_data_rule,db:mrv_activity_data.reconciliation_rule,db:mrv_files.original_filename}}
+</div>
+</div>
+</div>
+<div class="card span-12">
+<div class="chd"><h3>Monthly/Period Aggregation Table</h3></div>
+<div class="cbd">
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th class="nowrap">Month/Period</th>
+<th class="right nowrap">Raw Value</th>
+<th class="right nowrap">Adjustments</th>
+<th class="right nowrap">Final Value</th>
+<th>Evidence Link</th>
+</tr>
+</thead>
+<tbody>
+{{db:monthly_table_rows}}
+</tbody>
+</table></div>
+<div class="small muted" style="margin-top:10px">
+                * 검증자는 “원시값→조정→최종값” 흐름을 확인합니다. 월별 원시 데이터는 <strong>{{db:mrv_report_activity_uploads.file_monthly_raw}}</strong>에서 확인.               </div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="section pb" id="sec3">
+<div class="hd">
+<h2 class="title"><span class="secno">3</span>Emission Factor 근거 및 선택 사유 (EF Basis &amp; Rationale)</h2>
+</div>
+<div class="bd">
+<div class="grid">
+<div class="card span-6">
+<div class="chd"><h3>Emission Factor Details</h3></div>
+<div class="cbd">
+<div class="kv">
+<div class="kv-row"><div class="k">Emission Factor</div><div class="v mono">{{db:mrv_emission_factor_ref.emission_factor}} {{db:mrv_emission_factor_ref.emission_factor_unit}}</div></div>
+<div class="kv-row"><div class="k">Source</div><div class="v">{{db:mrv_emission_factor_ref.ef_source}}</div></div>
+<div class="kv-row"><div class="k">Version/Year</div><div class="v">{{db:mrv_emission_factor_ref.ef_version}}</div></div>
+<div class="kv-row"><div class="k">Tier / Level</div><div class="v">{{db:mrv_emission_factor_ref.ef_tier}}</div></div>
+<div class="kv-row"><div class="k">GWP Version</div><div class="v">{{db:mrv_calculation_result.gwp_version}}</div></div>
+</div>
+</div>
+</div>
+<div class="card span-6">
+<div class="chd"><h3>Selection Justification</h3></div>
+<div class="cbd">
+<div class="narr mt0">
+
+{{llm:ef_rationale|​ref=db:mrv_emission_factor_ref.emission_factor,db:mrv_emission_factor_ref.emission_factor_unit,db:mrv_emission_factor_ref.ef_source,db:mrv_emission_factor_ref.ef_version,db:mrv_emission_factor_ref.ef_tier,db:mrv_emission_factor_ref.ef_source}}
+
+</div>
+<div class="small muted" style="margin-top:10px">
+                * Tier 선택 사유(데이터 가용성/규제 정합/정확도) 및 대안 검토(Tier2/Company-specific)의 존재 여부를 명시 권장.
+              </div>
+</div>
+</div>
+<div class="card span-12">
+<div class="chd"><h3>Reference Evidence (Document)</h3></div>
+<div class="cbd">
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Reference Document</th>
+<th style="width: 164.64px">Version</th>
+<th style="width: 164.64px">Publish Year</th>
+<th>Relevant Section</th>
+<th style="width: 235.2px">File/Link</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>{{db:mrv_emission_factor_ref.ef_source}}</td>
+<td class="mono">{{db:mrv_emission_factor_ref.ef_version}}</td>
+<td class="mono">{{db:mrv_emission_factor_ref.ef_publish_year}}</td>
+<td>{{db:mrv_emission_factor_ref.ef_selection_rationale}}</td>
+<td class="mono">{{db:mrv_report_activity_uploads.file_ef_ref}}</td>
+</tr>
+</tbody>
+</table></div>
+<div class="small muted" style="margin-top:10px">
+                * Reference Document / Version / Relevant Section는 EF 등록값, File/Link는 업로드된 EF 참조 파일명.
+              </div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="section" id="sec4">
+<div class="hd">
+<h2 class="title"><span class="secno">4</span>산정식/단위/반올림 규칙 (Calculation Rules)</h2>
+</div>
+<div class="bd">
+<div class="grid">
+<div class="card span-6">
+<div class="chd"><h3>Calculation Setup</h3></div>
+<div class="cbd">
+<div class="kv">
+<div class="kv-row"><div class="k">Formula</div><div class="v mono">{{db:mrv_calculation_result.formula}}</div></div>
+<div class="kv-row"><div class="k">Rounding Rule</div><div class="v">{{db:mrv_calculation_result.rounding_rule}}</div></div>
+<div class="kv-row"><div class="k">Unit Conversions</div><div class="v">{{db:mrv_calculation_result.unit_conversions}}</div></div>
+<div class="kv-row"><div class="k">Software/Tool</div><div class="v">{{db:mrv_files.standardized_name}}</div></div>
+</div>
+<div class="narr">
+
+{{llm:calculation_method_narrative|​ref=db:mrv_calculation_result.formula,db:mrv_activity_data.usage,db:mrv_activity_data.usage_unit,db:mrv_emission_factor_ref.emission_factor,db:mrv_emission_factor_ref.emission_factor_unit,db:mrv_calculation_result.emission,db:mrv_calculation_result.emissions_unit,db:mrv_calculation_result.calculation_method_source}}
+</div>
+</div>
+</div>
+<div class="card span-6">
+<div class="chd"><h3>Results</h3></div>
+<div class="cbd">
+<div class="kv">
+<div class="kv-row"><div class="k">Scope</div><div class="v">{{db:mrv_calculation_result.scope}}</div></div>
+<div class="kv-row"><div class="k">Emission</div><div class="v mono">{{db:mrv_calculation_result.emission}} {{db:mrv_calculation_result.emissions_unit}}</div></div>
+</div>
+<div class="narr">
+
+{{llm:calculation_interpretation|​ref=db:mrv_calculation_result.emission,db:mrv_calculation_result.emissions_unit,db:mrv_activity_data.usage,db:mrv_activity_data.usage_unit,db:mrv_activity_data.facility}}
+</div>
+</div>
+</div>
+<div class="card span-12">
+<div class="chd"><h3>Calculation Reproducibility</h3></div>
+<div class="cbd">
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="width: 211.68px">Input Field</th>
+<th>Value</th>
+<th style="width: 235.2px">Source (Evidence)</th>
+<th style="width: 176.4px">Owner</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>Activity (Usage)</td><td class="mono">{{db:mrv_activity_data.usage}} {{db:mrv_activity_data.usage_unit}}</td><td class="mono">{{db:mrv_report_activity_uploads.file_annual_report}} + {{db:mrv_report_activity_uploads.file_monthly_raw}}</td><td class="mono">{{db:mrv_report.prepared_by}}</td></tr>
+<tr><td>Emission Factor</td><td class="mono">{{db:mrv_emission_factor_ref.emission_factor}} {{db:mrv_emission_factor_ref.emission_factor_unit}}</td><td class="mono">{{db:mrv_report_activity_uploads.file_ef_ref}}</td><td class="mono">{{db:mrv_report.prepared_by}}</td></tr>
+<tr><td>Formula/Method</td><td class="mono">{{db:mrv_calculation_result.formula}}</td><td class="mono">{{db:mrv_calculation_result.calculation_method_source}}</td><td class="mono">{{db:mrv_report.prepared_by}}</td></tr>
+<tr><td>Output</td><td class="mono">{{db:mrv_calculation_result.emission}} {{db:mrv_calculation_result.emissions_unit}}</td><td class="mono">{{db:mrv_calculation_result.calculation_method_source}}</td><td class="mono">{{db:mrv_report.prepared_by}}</td></tr>
+</tbody>
+</table></div>
+<div class="small muted" style="margin-top:10px">
+                * 검증자는 “입력값-출처-소유자-산출” 매핑을 확인합니다.
+              </div>
+</div>
+</div>
+</div>
+<div class="grid">
+<div class="card span-6">
+<div class="chd"><h3>단위 검증 (Unit Dimensional Analysis)</h3></div>
+<div class="cbd">
+<div class="table-wrap"><table>
+<tbody>
+<tr><th style="width: 258.72px">Input: Activity Data (AD)</th><td class="mono">{{db:mrv_activity_data.activity_data_display}}</td></tr>
+<tr><th>× Factor: Emission Factor (EF)</th><td class="mono">{{db:mrv_emission_factor_ref.emission_factor_unit}}</td></tr>
+<tr><th>= Output: Conversion</th><td class="mono">{{db:mrv_calculation_result.unit_conversions_display}}</td></tr>
+<tr><th>GWP Applied</th><td class="mono">{{db:mrv_calculation_result.gwp_version}}</td></tr>
+<tr><th>Output Precision</th><td>{{db:mrv_calculation_result.rounding_rule}}</td></tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="card span-6">
+<div class="chd"><h3>Independent Recalculation (Sample)</h3></div>
+<div class="cbd">
+<div class="table-wrap"><table>
+<thead><tr><th>Item</th><th class="right">Value</th><th>Evidence Link</th></tr></thead>
+<tbody>
+<tr><td>Annual AD (sum of 12 months)</td><td class="right mono">{{db:mrv_activity_data.usage}} {{db:mrv_activity_data.usage_unit}}</td><td class="mono">EV-AD-XXX ({{db:mrv_field_provenance.source_locator}})</td></tr>
+<tr><td>EF</td><td class="right mono">{{db:mrv_emission_factor_ref.emission_factor}} {{db:mrv_emission_factor_ref.emission_factor_unit}}</td><td class="mono">RF-EF-XXX ({{db:mrv_field_provenance.source_locator}})</td></tr>
+<tr><td>Computed emissions</td><td class="right mono">{{db:mrv_calculation_result.emission}} {{db:mrv_calculation_result.emissions_unit}}</td><td class="mono">CALC-XXX ({{db:mrv_field_provenance.source_locator}})</td></tr>
+<tr><td>Reported emissions</td><td class="right mono">{{db:mrv_calculation_result.emission}} {{db:mrv_calculation_result.emissions_unit}}</td><td class="mono">Section 4 (Results)</td></tr>
+<tr><td>Difference</td><td class="right mono">{{db:mrv_calculation_result.recalculation_difference_display}}</td><td></td></tr>
+</tbody>
+</table></div>
+<div class="small muted" style="margin-top:10px">* 실제 제출 시 CALC workbook과 Report 값이 0차이로 맞아야 합니다.</div>
+</div>
+</div>
+</div>
+<div class="grid">
+<div class="card span-12">
+<div class="chd"><h3>전년 대비 비교 (Prior Year Comparison)</h3></div>
+<div class="cbd">
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="width: 211.68px">항목</th>
+<th class="right" style="width: 200px">전년도 (Prior Year)</th>
+<th class="right" style="width: 200px">당해연도 (Current Year)</th>
+<th class="right" style="width: 160px">변동률 (Change)</th>
+<th>비고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Total Emissions</td>
+<td class="right mono">{{db:mrv_calculation_result.prior_year_emission_display}}</td>
+<td class="right mono">{{db:mrv_calculation_result.emission}} {{db:mrv_calculation_result.emissions_unit}}</td>
+<td class="right mono">{{db:mrv_calculation_result.yoy_change_display}}</td>
+<td>
+{{llm:yoy_analysis|ref=db:mrv_calculation_result.emission,db:mrv_calculation_result.emissions_unit,db:mrv_calculation_result.prior_year_emission,db:mrv_activity_data.activity_name,db:mrv_activity_data.facility}}
+</td>
+</tr>
+</tbody>
+</table></div>
+<div class="small muted" style="margin-top:10px">
+  * 최초 보고연도인 경우 전년도 데이터가 "해당 없음"으로 표시됩니다. 기준연도: {{db:mrv_report.base_year}}
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="section" id="sec5">
+<div class="hd">
+<h2 class="title"><span class="secno">5</span>QA/QC(검토·승인·이상치 처리) (QA/QC &amp; Review Trail)</h2>
+</div>
+<div class="bd">
+<div class="grid">
+<div class="card span-6">
+<div class="chd"><h3>Instrument &amp; Calibration</h3></div>
+<div class="cbd">
+<div class="kv">
+<div class="kv-row"><div class="k">Instrument / Meter</div><div class="v">{{db:mrv_document_metadata.instrument_name}}</div></div>
+<div class="kv-row"><div class="k">Instrument ID</div><div class="v">{{db:mrv_document_metadata.instrument_id}}</div></div>
+<div class="kv-row"><div class="k">Calibration Date</div><div class="v mono">{{db:mrv_document_metadata.calibration_date}}</div></div>
+<div class="kv-row"><div class="k">Accuracy / Spec</div><div class="v">{{db:mrv_document_metadata.instrument_accuracy}}</div></div>
+<div class="kv-row"><div class="k">Calibration Evidence</div><div class="v mono">{{db:mrv_document_metadata.calibration_evidence_file}}</div></div>
+</div>
+</div>
+</div>
+<div class="card span-6">
+<div class="chd"><h3>QA/QC Checklist</h3></div>
+<div class="cbd">
+<div class="table-wrap"><table>
+<thead>
+<tr><th style="width: 51.74px">#</th><th>Check</th><th style="width: 164.64px">Result</th><th>Notes</th></tr>
+</thead>
+<tbody>
+<tr><td class="right">1</td><td>기간/단위 일관성 확인</td><td>{{db:mrv_qc_checks.qc1_result}}</td><td>{{llm:qc_note_period_consistency|ref=db:mrv_activity_data.start_date,db:mrv_activity_data.end_date,db:mrv_activity_data.usage_unit}}</td></tr>
+<tr><td class="right">2</td><td>이상치(Outlier) 점검</td><td>{{db:mrv_qc_checks.qc2_result}}</td><td>{{llm:qc_note_outlier_check|ref=db:mrv_activity_data.usage,db:mrv_activity_data.usage_unit,db:mrv_report_activity_uploads.file_operation_log}}</td></tr>
+<tr><td class="right">3</td><td>결측/대체 처리 기록</td><td>{{db:mrv_qc_checks.qc3_result}}</td><td>{{llm:qc_note_missing_data|ref=db:mrv_activity_data.usage,db:mrv_activity_data.missing_data_rule,db:mrv_activity_data.reconciliation_rule}}</td></tr>
+<tr><td class="right">4</td><td>증빙 연결(Trace) 확인</td><td>{{db:mrv_qc_checks.qc4_result}}</td><td>{{llm:qc_note_trace|ref=db:mrv_activity_data.usage,db:mrv_report_activity_uploads.file_monthly_raw,db:mrv_report_activity_uploads.file_annual_report}}</td></tr>
+<tr><td class="right">5</td><td>계수/버전 검증</td><td>{{db:mrv_qc_checks.qc5_result}}</td><td>{{llm:qc_note_ef_version|ref=db:mrv_emission_factor_ref.emission_factor,db:mrv_emission_factor_ref.emission_factor_unit,db:mrv_emission_factor_ref.ef_version,db:mrv_emission_factor_ref.ef_source}}</td></tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<div class="card span-12">
+<div class="chd"><h3>데이터 품질 지표 (Data Quality Indicators)</h3></div>
+<div class="cbd">
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="width: 200px">데이터 항목</th>
+<th style="width: 140px">완전성 (Completeness)</th>
+<th style="width: 140px">정확성 (Accuracy)</th>
+<th style="width: 140px">일관성 (Consistency)</th>
+<th>평가 근거</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Activity Data (활동자료)</td>
+<td class="mono">{{db:mrv_qc_checks.qc1_result}}</td>
+<td class="mono">{{db:mrv_qc_checks.qc2_result}}</td>
+<td class="mono">{{db:mrv_qc_checks.qc3_result}}</td>
+<td>{{llm:dqi_activity_basis|ref=db:mrv_activity_data.usage,db:mrv_activity_data.usage_unit,db:mrv_activity_data.start_date,db:mrv_activity_data.end_date,db:mrv_document_metadata.instrument_accuracy}}</td>
+</tr>
+<tr>
+<td>Emission Factor (배출계수)</td>
+<td class="mono">{{db:mrv_qc_checks.qc5_result}}</td>
+<td class="mono">{{db:mrv_qc_checks.qc5_result}}</td>
+<td class="mono">{{db:mrv_qc_checks.qc5_result}}</td>
+<td>{{llm:dqi_ef_basis|ref=db:mrv_emission_factor_ref.ef_source,db:mrv_emission_factor_ref.ef_version,db:mrv_emission_factor_ref.ef_tier,db:mrv_calculation_result.gwp_version}}</td>
+</tr>
+<tr>
+<td>Evidence (증빙자료)</td>
+<td class="mono">{{db:mrv_qc_checks.qc4_result}}</td>
+<td class="mono">{{db:mrv_qc_checks.qc4_result}}</td>
+<td class="mono">{{db:mrv_qc_checks.qc4_result}}</td>
+<td>{{llm:dqi_evidence_basis|ref=db:mrv_report.report_id,db:mrv_document_metadata.calibration_date,db:mrv_document_metadata.calibration_evidence_file}}</td>
+</tr>
+</tbody>
+</table></div>
+<div class="small muted" style="margin-top:10px">
+  * DQI 평가는 QC 체크리스트 결과에 기반합니다. 완전성=데이터 누락 여부, 정확성=측정/계수 오차, 일관성=기간·단위·방법론 일치.
+</div>
+</div>
+</div>
+<div class="card span-12">
+<div class="chd"><h3>Data Quality Narrative (LLM 가능)</h3></div>
+<div class="cbd">
+<div class="narr mt0">
+
+{{llm:dq_statement|​ref=db:mrv_document_metadata.instrument_name,db:mrv_document_metadata.instrument_id,db:mrv_document_metadata.calibration_date,db:mrv_document_metadata.instrument_accuracy,db:mrv_qc_checks.qc_result}}
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="section" id="sec6">
+<div class="hd">
+<h2 class="title"><span class="secno">6</span>불확도(가능 시) 또는 DQ 설명 (Uncertainty / Data Quality)</h2>
+</div>
+<div class="bd">
+<div class="grid">
+<div class="card span-6">
+<div class="chd"><h3>Uncertainty Inputs</h3></div>
+<div class="cbd">
+<div class="kv">
+<div class="kv-row"><div class="k">Activity Uncertainty</div><div class="v">{{db:mrv_calculation_result.activity_uncertainty}}</div></div>
+<div class="kv-row"><div class="k">EF Uncertainty</div><div class="v">{{db:mrv_calculation_result.ef_uncertainty}}</div></div>
+<div class="kv-row"><div class="k">Method</div><div class="v">{{db:mrv_calculation_result.uncertainty_method}}</div></div>
+<div class="kv-row"><div class="k">Combined (Optional)</div><div class="v">{{db:mrv_calculation_result.combined_uncertainty}}</div></div>
+</div>
+</div>
+</div>
+<div class="card span-6">
+<div class="chd"><h3>Uncertainty Narrative (LLM 가능)</h3></div>
+<div class="cbd">
+<div class="narr mt0">
+
+{{llm:uncertainty_statement|​ref=db:mrv_report.report_id}}
+
+</div>
+</div>
+</div>
+<div class="card span-12">
+<div class="chd"><h3>Sensitivity Table</h3></div>
+<div class="cbd">
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th class="right">Base</th>
+<th class="right">-x%</th>
+<th class="right">+x%</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>Activity (Usage)</td><td class="right mono">{{db:sensitivity_usage_base}}</td><td class="right mono">{{db:sensitivity_usage_minus}}</td><td class="right mono">{{db:sensitivity_usage_plus}}</td><td>{{db:sensitivity_usage_notes}}</td></tr>
+<tr><td>Emission Factor</td><td class="right mono">{{db:sensitivity_ef_base}}</td><td class="right mono">{{db:sensitivity_ef_minus}}</td><td class="right mono">{{db:sensitivity_ef_plus}}</td><td>{{db:sensitivity_ef_notes}}</td></tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="section" id="sec7">
+<div class="hd">
+<h2 class="title"><span class="secno">7</span>Evidence Register(증빙 목록) (Evidence Register)</h2>
+</div>
+<div class="bd">
+<div class="grid">
+<div class="card span-12">
+<div class="chd"><h3>Evidence List</h3></div>
+<div class="cbd">
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="width: 100px">File ID</th>
+<th>Document</th>
+<th style="width: 100px">Type</th>
+<th style="width: 110px">Issue Date</th>
+<th>Storage / Link</th>
+</tr>
+</thead>
+<tbody>
+{{db:evidence_register_table_rows}}
+</tbody>
+</table></div>
+<div class="narr" style="margin-top:12px">
+
+{{llm:integrity_requirements|​ref=db:mrv_report.report_id}}
+
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="section" id="sec8">
+<div class="hd">
+<h2 class="title"><span class="secno">8</span>Change Log(변경 이력) (Change Log)</h2>
+</div>
+<div class="bd">
+<div class="grid">
+<div class="card span-6">
+<div class="chd"><h3>Approvals</h3></div>
+<div class="cbd">
+<div class="siggrid">
+<div class="sig">
+<div class="k">Prepared By</div>
+<div class="v">{{db:mrv_report.prepared_by}}</div>
+<div class="line"><span>Signature</span><span class="mono">{{db:mrv_report.prepared_signature_date}}</span></div>
+</div>
+<div class="sig">
+<div class="k">Reviewed By</div>
+<div class="v">{{db:mrv_report.reviewed_by}}</div>
+<div class="line"><span>Signature</span><span class="mono">{{db:mrv_report.reviewed_signature_date}}</span></div>
+</div>
+<div class="sig">
+<div class="k">Approved By</div>
+<div class="v">{{db:mrv_report.approved_by}}</div>
+<div class="line"><span>Signature</span><span class="mono">{{db:mrv_report.approved_signature_date}}</span></div>
+</div>
+</div>
+<div class="narr" style="margin-top:12px">
+
+{{llm:responsibility_statement|​ref=db:mrv_report.prepared_by,db:mrv_report.reviewed_by,db:mrv_report.approved_by,db:mrv_report.report_id,db:mrv_report.report_version}}
+</div>
+</div>
+</div>
+<div class="card span-6">
+<div class="chd"><h3>Change Log</h3></div>
+<div class="cbd">
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="width: 141.12px">Date</th>
+<th style="width: 188.16px">Author</th>
+<th>Change Summary</th>
+<th class="right" style="width: 105.84px">Version</th>
+</tr>
+</thead>
+<tbody>
+{{db:changelog_table_rows}}
+</tbody>
+</table></div>
+<div class="small muted" style="margin-top:10px">
+                * 산정값/경계/계수/기간/단위 변경은 검증 리스크를 높이므로, 반드시 변경 근거와 증빙을 연결하세요.
+              </div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="section" id="secREG">
+<div class="hd">
+<h2 class="title"><span class="secno">R</span>규제 제출 매핑 (Regulatory Submission Mapping)</h2>
+</div>
+<div class="bd">
+<div class="grid">
+<div class="card span-6">
+<div class="chd"><h3>Required Fields Mapping ({{db:mrv_report.program_regime}})</h3></div>
+<div class="cbd">
+<div class="table-wrap"><table>
+<thead><tr><th>Verification Requirement</th><th>Report Section</th></tr></thead>
+<tbody>
+<tr><td>사업장/배출원 식별 (Source Identification)</td><td>Section 1 (Boundary) + Section 2 (Activity Definition)</td></tr>
+<tr><td>활동자료 및 근거 (Activity Data &amp; Basis)</td><td>Section 2 + Section 7 (Evidence Register)</td></tr>
+<tr><td>배출계수 및 근거 (Emission Factor &amp; Basis)</td><td>Section 3 (EF) + Reference Evidence table</td></tr>
+<tr><td>산정식/단위/반올림 (Calculation Rules)</td><td>Section 4 (Calculation)</td></tr>
+<tr><td>QA/QC 및 데이터 품질 (Data Quality)</td><td>Section 5 (QA/QC) + Section 6 (Uncertainty)</td></tr>
+<tr><td>검증 개요/서명 (Verification &amp; Approval)</td><td>Section VS (Verification Overview) + Section 8</td></tr>
+<tr><td>전년 대비 비교 (Year-on-Year)</td><td>Section 4 (Prior Year Comparison)</td></tr>
+</tbody>
+</table></div>
+<div class="small muted" style="margin-top:10px">
+  * 규제 프로그램({{db:mrv_report.program_regime}})에 따라 요구 양식이 다를 수 있습니다. 본 매핑은 ISO 14064-1/3 기준입니다.
+</div>
+</div>
+</div>
+<div class="card span-6">
+<div class="chd"><h3>Compliance Declarations</h3></div>
+<div class="cbd">
+<div class="narr mt0">
+
+{{llm:declarations|​ref=db:mrv_report.report_id}}
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<div class="page-footer no-print">
+<div>Green-X MRV Verification Submission Package · {{db:mrv_report.report_id}}</div>
+<div>Page <span class="page-number"></span></div>
+</div>
+</div>
+</body></html>

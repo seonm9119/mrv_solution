@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&display=swap" rel="stylesheet" />
+    <title>LCA · LOT · OCR | 제조산업 통합 솔루션</title>
+  </head>
+  <body>
+    <script>
+      (function(){ var p = window.location.pathname; if (!p || p === '/') { window.location.replace('/dashboard' + (window.location.search || '') + (window.location.hash || '')); } })();
+    </script>
+    <div id="root">
+      <p style="text-align:center;padding:2rem;color:#64748b;font-family:system-ui,sans-serif;">로딩 중...</p>
+    </div>
+    <noscript>
+      <p style="text-align:center;padding:2rem;font-family:system-ui,sans-serif;">JavaScript를 사용할 수 없습니다. 브라우저 설정에서 JavaScript를 활성화해 주세요.</p>
+    </noscript>
+    <script>
+      setTimeout(function(){
+        var r = document.getElementById('root');
+        if (r && r.innerText && r.innerText.indexOf('로딩 중') !== -1) {
+          r.innerHTML = '<div style="max-width:480px;margin:2rem auto;padding:1.5rem;font-family:system-ui,sans-serif;text-align:center;"><p style="color:#b91c1c;font-weight:600;">스크립트 로드 실패 또는 실행 오류</p><p style="color:#64748b;font-size:14px;margin-top:0.5rem;">F12 개발자 도구 → Console 탭에서 오류 메시지를 확인해 주세요.</p><button type="button" onclick="location.reload()" style="margin-top:1rem;padding:0.5rem 1rem;background:#0f172a;color:#fff;border:none;border-radius:6px;cursor:pointer;">새로고침</button></div>';
+        }
+      }, 8000);
+    </script>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

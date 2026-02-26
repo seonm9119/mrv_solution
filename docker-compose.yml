@@ -1,0 +1,86 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: no
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    environment:
+      - NODE_ENV=production
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: no
+    ports:
+      - "4000:4000"
+    # DeepSeek OCR가 별도 compose로 호스트 8002에 떠 있으면, 컨테이너에서 호스트로 접근하기 위함 (Linux)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # 호스트 LCA/dummy → 컨테이너 /app/dummy. DUMMY_BOILER_DIR=/app/dummy/보일러 와 일치해야 함.
+    # 데이터 추출 시 PNG 저장: LCA/output → /app/output
+    volumes:
+      - ./dummy:/app/dummy
+      - ./output:/app/output
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+      # dummy 파일 자동 로드: /app/dummy 하위 scope1/scope2/scope3 구조 (DUMMY_BOILER_DIR 불필요)
+      - PGHOST=postgres
+      - PGPORT=5432
+      - PGUSER=lca
+      - PGPASSWORD=lca_secret
+      - PGDATABASE=lca
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_BUCKET=mrv-docs
+      # LLM: config.py 기본값 사용 (llm_base_url, llm_model_id, llm_api_key)
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://localhost:4000/api/health')\" || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+
+  minio:
+    image: minio/minio:latest
+    restart: no
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+
+  postgres:
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    restart: no
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: lca
+      POSTGRES_PASSWORD: lca_secret
+      POSTGRES_DB: lca
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lca -d lca"]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
