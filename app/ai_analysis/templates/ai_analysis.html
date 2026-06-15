@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>Green-X AI 분석 · {{activity_name}}</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g900:#0f3d33;--g800:#12453a;--g700:#155144;--g600:#1f8a70;
+  --bg:#f1f5f9;--surface:#fff;--surface2:#f8fafc;--border:#e5e7eb;
+  --text:#0f172a;--muted:#64748b;--soft:#475569;--green:#166534;
+  --blue:#1d4ed8;--amber:#92400e;--red:#991b1b;--purple:#4c1d95;
+  --r:14px;--rs:8px;
+}
+body{min-height:100vh;background:var(--bg);color:var(--text);font-family:Inter,"Noto Sans KR",Arial,sans-serif;overflow-x:hidden}
+.hdr{position:sticky;top:0;z-index:20;background:#fff;border-bottom:2px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.hdr-in{max-width:1200px;height:64px;margin:0 auto;padding:0 40px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo{display:flex;align-items:center;gap:12px;min-width:0}
+.logo-box{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--g600),var(--g900));display:grid;place-items:center;color:#fff;font-size:15px;font-weight:900}
+.logo-name{min-width:0;color:var(--g900);font-size:15px;font-weight:800;overflow-wrap:anywhere}
+.hdr-pill{display:flex;align-items:center;gap:8px;padding:5px 14px;border:1px solid var(--border);border-radius:999px;background:#f8fafc;color:var(--soft);font-size:11px;font-weight:700}
+.pulse{width:7px;height:7px;border-radius:50%;background:#16a34a;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
+.hbadge{padding:4px 11px;border:1px solid rgba(22,163,74,.3);border-radius:999px;background:#dcfce7;color:#166534;font-size:11px;font-weight:800}
+.insight-banner{background:linear-gradient(135deg,rgba(31,138,112,.06),rgba(37,99,235,.035),rgba(124,58,237,.035));border-bottom:2px solid rgba(31,138,112,.12);padding:18px 40px}
+.insight-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:22px}
+.insight-text{flex:1;color:var(--text);font-size:13.5px;font-weight:650;line-height:1.65}
+.insight-text strong{color:var(--g700)}
+.insight-right{display:flex;gap:24px;flex:0 0 auto}
+.insight-stat{text-align:center}
+.is-val{color:var(--g700);font-size:22px;font-weight:850}
+.is-label{margin-top:2px;color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase}
+.page{max-width:1200px;margin:0 auto;padding:28px 40px 80px}
+.sec-title{display:flex;align-items:center;gap:10px;margin:32px 0 16px;color:var(--muted);font-size:11px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase}
+.sec-title::after{content:"";height:1px;background:var(--border);flex:1}
+.grid-5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.card,.kpi,.param-card,.llm-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);box-shadow:0 1px 3px rgba(0,0,0,.04);overflow:hidden}
+.card{padding:22px 24px}
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:18px}
+.card-title{color:var(--text);font-size:13.5px;font-weight:800}
+.card-sub{margin-top:3px;color:var(--muted);font-size:11px;font-weight:650;line-height:1.4}
+.card-tag,.llm-tag{white-space:nowrap;padding:3px 10px;border-radius:999px;border:1px solid;font-size:10px;font-weight:800}
+.ct-g{background:#dcfce7;border-color:rgba(22,163,74,.3);color:#166534}
+.ct-b{background:#dbeafe;border-color:rgba(37,99,235,.3);color:#1d4ed8}
+.ct-a{background:#fef3c7;border-color:rgba(217,119,6,.3);color:#92400e}
+.ct-p{background:#ede9fe;border-color:rgba(124,58,237,.2);color:#4c1d95}
+.param-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.param-card-hdr{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 16px;background:linear-gradient(135deg,#0f3d33,#1f8a70);color:#fff}
+.param-card:nth-child(2) .param-card-hdr{background:linear-gradient(135deg,#1e3a8a,#2563eb)}
+.param-card:nth-child(3) .param-card-hdr{background:linear-gradient(135deg,#4c1d95,#7c3aed)}
+.param-card:nth-child(4) .param-card-hdr{background:linear-gradient(135deg,#7c2d12,#ea580c)}
+.param-card-title{font-size:11px;font-weight:850;line-height:1.3}
+.param-card-tag{padding:2px 7px;border:1px solid rgba(255,255,255,.25);border-radius:999px;background:rgba(255,255,255,.18);font-size:9px;font-weight:800}
+.param-card-body{padding:12px 16px}
+.param-big{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:9px;padding:9px 11px;border:1px solid var(--border);border-radius:var(--rs);background:#f8fafc}
+.pb-label{margin-bottom:3px;color:var(--green);font-size:9px;font-weight:800;text-transform:uppercase}
+.pb-value{color:var(--text);font-size:13px;font-weight:900;overflow-wrap:anywhere}
+.pb-unit{margin-top:1px;color:var(--muted);font-size:9px}
+.param-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid #f1f5f9}
+.param-row:last-child{border-bottom:0}
+.param-key{color:var(--muted);font-size:10px}
+.param-val{max-width:62%;color:var(--soft);font-size:10px;font-weight:750;text-align:right;overflow-wrap:anywhere}
+.kpi{position:relative;padding:20px 20px 16px}
+.kpi::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--g600),var(--g900))}
+.kpi:nth-child(2)::before{background:linear-gradient(90deg,#2563eb,#1d4ed8)}
+.kpi:nth-child(3)::before{background:linear-gradient(90deg,#d97706,#92400e)}
+.kpi:nth-child(4)::before{background:linear-gradient(90deg,#7c3aed,#4c1d95)}
+.kpi:nth-child(5)::before{background:linear-gradient(90deg,#0891b2,#164e63)}
+.kpi-lbl{margin-bottom:6px;color:var(--muted);font-size:10px;font-weight:850;text-transform:uppercase}
+.kpi-val{color:var(--g700);font-size:28px;font-weight:900;line-height:1}
+.kpi-unit{margin-left:2px;color:var(--soft);font-size:12px;font-weight:650}
+.kpi-sub{margin-top:7px;color:var(--muted);font-size:11px;line-height:1.4}
+.opinion-table,.inv-table,.sc-table{width:100%;border-collapse:collapse;font-size:11px}
+.opinion-table th,.inv-table th,.sc-table th{padding:9px 12px;background:#12453a;color:rgba(255,255,255,.92);font-size:10px;text-align:left;text-transform:uppercase}
+.opinion-table td,.inv-table td,.sc-table td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top}
+.inv-table th:not(:first-child),.inv-table td:not(:first-child){text-align:right;font-variant-numeric:tabular-nums}
+.status-pill{display:inline-flex;padding:2px 9px;border-radius:999px;background:#dcfce7;color:#166534;font-size:10px;font-weight:850}
+.llm-card{padding:20px 22px;margin-bottom:14px;background:linear-gradient(135deg,#faf5ff,#eff6ff);border-color:rgba(124,58,237,.15)}
+.llm-card-hdr{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.llm-card-title{color:#4c1d95;font-size:12px;font-weight:850;text-transform:uppercase}
+.llm-tag{background:#ede9fe;border-color:rgba(124,58,237,.2);color:#4c1d95}
+.llm-narr{min-height:1.2em;color:#374151;font-size:12px;font-weight:650;line-height:1.8;white-space:pre-wrap}
+.scenario-list{display:grid;gap:10px}
+.sc-item{padding:14px 16px;border:1px solid var(--border);border-radius:var(--rs);background:#f8fafc}
+.sc-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.sc-title{font-size:13px;font-weight:850}
+.sc-savings{font-size:12px;font-weight:850;color:#166534}
+.sc-bar-bg{height:8px;margin-bottom:7px;border-radius:999px;background:#e5e7eb;overflow:hidden}
+.sc-bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#1f8a70,#34d399)}
+.sc-details{display:flex;flex-wrap:wrap;gap:14px}
+.sc-detail{color:var(--muted);font-size:10px}
+.sc-detail strong{color:var(--soft)}
+.insight-box{padding:14px 16px;border:1px solid rgba(22,163,74,.18);border-radius:var(--rs);background:#f0fdf4}
+.ib-title{margin-bottom:6px;color:var(--g800);font-size:12px;font-weight:850}
+.ib-body{color:#374151;font-size:11.5px;line-height:1.65;white-space:pre-wrap}
+.fc-legend{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:14px}
+.fc-item{display:flex;align-items:center;gap:6px;color:var(--soft);font-size:11px}
+.fc-line{width:24px;height:3px;border-radius:999px}
+.mrv-ai-typing-text{white-space:pre-wrap}
+.llm-placeholder{display:inline-block;min-width:72px;min-height:1em;border-radius:4px;background:#edf7f6;color:#277a75;font-weight:800}
+footer{padding:20px 40px;border-top:1px solid var(--border);background:#fff;color:var(--muted);font-size:11px;text-align:center}
+@media (max-width:960px){
+  .hdr-in,.insight-in{display:grid;height:auto;padding:14px 20px}
+  .insight-banner{padding:16px 20px}
+  .page{padding:22px 18px 56px}
+  .grid-5,.grid-4,.grid-3,.grid-2,.param-grid{grid-template-columns:1fr}
+  .insight-right{display:grid;grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="logo">
+      <div class="logo-box">GX</div>
+      <div class="logo-name">Green-X · {{facility}}</div>
+    </div>
+    <div class="hdr-pill"><span class="pulse"></span>{{report_id}} · {{inventory_year}}년 연간 분석 · {{activity_name}}</div>
+    <div class="hbadge" id="llm-status-badge">AI 분석 중...</div>
+  </div>
+</header>
+
+<div class="insight-banner">
+  <div class="insight-in">
+    <div class="insight-text">
+      <strong>{{activity_name}}</strong> 연간 배출량 <strong>{{annual_emission}} {{emissions_unit}}</strong>.
+      연간 활동자료는 <strong>{{annual_usage}} {{usage_unit}}</strong>이며,
+      10% 효율 개선 시 <strong>{{save10_cost_k}}천 KRW</strong> 및
+      <strong>{{save10_emission}} tCO2e</strong> 감축 잠재가 있습니다.
+    </div>
+    <div class="insight-right">
+      <div class="insight-stat"><div class="is-val">{{annual_emission}}</div><div class="is-label">CO2e 배출</div></div>
+      <div class="insight-stat"><div class="is-val">{{yoy_change}}</div><div class="is-label">YoY 변화</div></div>
+      <div class="insight-stat"><div class="is-val">{{save10_cost_k}}</div><div class="is-label">천 KRW 절감</div></div>
+    </div>
+  </div>
+</div>
+
+<main class="page">
+  <div class="sec-title">01 배출 산정 파라미터 요약</div>
+  <section class="param-grid">
+    <article class="param-card">
+      <div class="param-card-hdr"><div class="param-card-title">배출 산정 파라미터</div><span class="param-card-tag">Emission</span></div>
+      <div class="param-card-body">
+        <div class="param-big">
+          <div><div class="pb-label">활동 자료</div><div class="pb-value">{{annual_usage}}</div><div class="pb-unit">{{usage_unit}}</div></div>
+          <div><div class="pb-label">산정 결과</div><div class="pb-value">{{annual_emission}}</div><div class="pb-unit">{{emissions_unit}}</div></div>
+        </div>
+        <div class="param-row"><span class="param-key">배출계수</span><span class="param-val">{{emission_factor}} {{emission_factor_unit}}</span></div>
+        <div class="param-row"><span class="param-key">Tier</span><span class="param-val">{{ef_tier}}</span></div>
+        <div class="param-row"><span class="param-key">참조 근거</span><span class="param-val">{{ef_source}}</span></div>
+      </div>
+    </article>
+    <article class="param-card">
+      <div class="param-card-hdr"><div class="param-card-title">계량기 검교정 정보</div><span class="param-card-tag">Meter</span></div>
+      <div class="param-card-body">
+        <div class="param-big">
+          <div><div class="pb-label">계량기</div><div class="pb-value">{{instrument_name}}</div></div>
+          <div><div class="pb-label">정확도</div><div class="pb-value">{{instrument_accuracy}}</div></div>
+        </div>
+        <div class="param-row"><span class="param-key">시리얼 ID</span><span class="param-val">{{instrument_id}}</span></div>
+        <div class="param-row"><span class="param-key">검교정일</span><span class="param-val">{{calibration_date}}</span></div>
+        <div class="param-row"><span class="param-key">교정 증빙</span><span class="param-val">{{calibration_evidence_file}}</span></div>
+      </div>
+    </article>
+    <article class="param-card">
+      <div class="param-card-hdr"><div class="param-card-title">배출 활동 방법론</div><span class="param-card-tag">Method</span></div>
+      <div class="param-card-body">
+        <div class="param-big">
+          <div><div class="pb-label">활동 유형</div><div class="pb-value">{{activity_name}}</div></div>
+          <div><div class="pb-label">사이트</div><div class="pb-value">{{facility}}</div></div>
+        </div>
+        <div class="param-row"><span class="param-key">데이터 소스</span><span class="param-val">{{data_source}}</span></div>
+        <div class="param-row"><span class="param-key">검증 기준</span><span class="param-val">{{verification_standard}}</span></div>
+      </div>
+    </article>
+    <article class="param-card">
+      <div class="param-card-hdr"><div class="param-card-title">사업자 정보</div><span class="param-card-tag">Entity</span></div>
+      <div class="param-card-body">
+        <div class="param-big">
+          <div><div class="pb-label">법인명</div><div class="pb-value">{{organization_name}}</div></div>
+          <div><div class="pb-label">인벤토리 연도</div><div class="pb-value">{{inventory_year}}</div></div>
+        </div>
+        <div class="param-row"><span class="param-key">자산명</span><span class="param-val">{{asset_name}}</span></div>
+        <div class="param-row"><span class="param-key">데이터 소유자</span><span class="param-val">{{data_owner}}</span></div>
+      </div>
+    </article>
+  </section>
+
+  <div class="sec-title">02 핵심 성과 지표</div>
+  <section class="grid-5">
+    <article class="kpi"><div class="kpi-lbl">Annual Usage</div><div class="kpi-val">{{annual_usage}}<span class="kpi-unit">{{usage_unit}}</span></div><div class="kpi-sub">{{activity_name}}</div></article>
+    <article class="kpi"><div class="kpi-lbl">GHG Emission</div><div class="kpi-val">{{annual_emission}}<span class="kpi-unit">tCO2e</span></div><div class="kpi-sub">전년도 {{prior_year_emission}} tCO2e</div></article>
+    <article class="kpi"><div class="kpi-lbl">Emission Factor</div><div class="kpi-val">{{emission_factor}}</div><div class="kpi-sub">{{emission_factor_unit}}</div></article>
+    <article class="kpi"><div class="kpi-lbl">10% Reduction</div><div class="kpi-val">{{save10_emission}}<span class="kpi-unit">tCO2e</span></div><div class="kpi-sub">{{save10_cost_k}}천 KRW 절감</div></article>
+    <article class="kpi"><div class="kpi-lbl">Annual Cost</div><div class="kpi-val">{{total_cost_m}}<span class="kpi-unit">백만</span></div><div class="kpi-sub">단가 {{unit_price}} KRW/{{usage_unit}}</div></article>
+  </section>
+
+  <div class="sec-title">03 최종 MRV 의견</div>
+  <section class="grid-2">
+    <article class="card">
+      <div class="card-head">
+        <div><div class="card-title">QA/QC Readiness</div><div class="card-sub">{{readiness_verdict}}</div></div>
+        <span class="status-pill">{{overall_status}}</span>
+      </div>
+      <table class="opinion-table">
+        <thead><tr><th>항목</th><th>값</th><th>판정 근거</th><th>상태</th></tr></thead>
+        <tbody>{{opinion_rows_html}}</tbody>
+      </table>
+    </article>
+    <article class="llm-card" data-llm-card="qaqc_narrative">
+      <div class="llm-card-hdr"><div class="llm-card-title">QA/QC Readiness Explanation</div><span class="llm-tag">AI</span></div>
+      <div class="llm-narr" data-llm-key="qaqc_narrative">{{qaqc_narrative}}</div>
+    </article>
+  </section>
+
+  <div class="sec-title">04 월별 연료 사용량 · GHG 배출량</div>
+  <section class="card">
+    <div class="card-head">
+      <div><div class="card-title">Monthly Usage & Emissions</div><div class="card-sub">연료 소비 Bar · CO2e 배출량 Line</div></div>
+      <span class="card-tag ct-b">활동자료</span>
+    </div>
+    <div style="position:relative;height:260px"><canvas id="dualChart"></canvas></div>
+  </section>
+  <article class="card" style="margin-top:12px" data-llm-card="spike_analysis">
+    <div class="card-head"><div><div class="card-title">월별 소비 패턴 분석</div><div class="card-sub">AI가 식별한 급증 구간 및 원인 분석</div></div><span class="llm-tag">AI</span></div>
+    <div class="llm-narr" data-llm-key="spike_analysis">{{spike_analysis}}</div>
+  </article>
+
+  <div class="sec-title">05 비용 예측 및 인보이스</div>
+  <section class="grid-2">
+    <article class="card">
+      <div class="card-head">
+        <div><div class="card-title">{{inventory_year}} 월별 연료 비용 vs 차년도 예측</div><div class="card-sub">단위: 천 KRW · BAU +3% / 최적화 -10%</div></div>
+        <span class="card-tag ct-a">Cost</span>
+      </div>
+      <div class="fc-legend">
+        <div class="fc-item"><div class="fc-line" style="background:#64748b"></div>{{inventory_year}} 실적</div>
+        <div class="fc-item"><div class="fc-line" style="background:#d97706"></div>BAU</div>
+        <div class="fc-item"><div class="fc-line" style="background:#1f8a70"></div>최적화</div>
+      </div>
+      <div style="position:relative;height:220px"><canvas id="costForecastChart"></canvas></div>
+    </article>
+    <article class="card">
+      <div class="card-head"><div><div class="card-title">월별 연료비 인보이스</div><div class="card-sub">연간 총액 {{total_cost}} KRW</div></div><span class="card-tag ct-a">Invoice</span></div>
+      <table class="inv-table"><thead><tr><th>기간</th><th>사용량</th><th>단가</th><th>금액</th></tr></thead><tbody>{{invoice_rows_html}}</tbody></table>
+    </article>
+  </section>
+
+  <div class="sec-title">06 배출 감축 시나리오</div>
+  <section class="grid-2">
+    <article class="card">
+      <div class="card-head"><div><div class="card-title">연료 효율 개선 시나리오</div><div class="card-sub">연간 사용량 {{annual_usage}} {{usage_unit}} 기준</div></div><span class="card-tag ct-g">Scenario</span></div>
+      <div class="scenario-list">{{scenario_cards_html}}</div>
+    </article>
+    <article class="card">
+      <div class="card-head"><div><div class="card-title">차년도 연료 소비 시나리오 예측</div><div class="card-sub">기준 실적, BAU, 감축 시나리오 비교</div></div><span class="card-tag ct-b">Forecast</span></div>
+      <div style="position:relative;height:300px"><canvas id="scenarioForecastChart"></canvas></div>
+    </article>
+  </section>
+
+  <div class="sec-title">07 종합 의사결정 매트릭스</div>
+  <section class="card">
+    <div style="overflow-x:auto">
+      <table class="sc-table">
+        <thead><tr><th>시나리오</th><th>개선율</th><th>연료</th><th>비용</th><th>CO2e 감축</th><th>주요 조치</th><th>권장 시점</th></tr></thead>
+        <tbody>{{matrix_rows_html}}</tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="sec-title">08 AI 분석 리포트</div>
+  <section class="grid-3">
+    <article class="llm-card" data-llm-card="reduction_levers"><div class="llm-card-hdr"><div class="llm-card-title">배출 감축 핵심 레버</div><span class="llm-tag">AI</span></div><div class="llm-narr" data-llm-key="reduction_levers">{{reduction_levers}}</div></article>
+    <article class="llm-card" data-llm-card="benchmark"><div class="llm-card-hdr"><div class="llm-card-title">업계 벤치마크 비교</div><span class="llm-tag">AI</span></div><div class="llm-narr" data-llm-key="benchmark">{{benchmark}}</div></article>
+    <article class="llm-card" data-llm-card="cost_reduction"><div class="llm-card-hdr"><div class="llm-card-title">비용 절감 시나리오 분석</div><span class="llm-tag">AI</span></div><div class="llm-narr" data-llm-key="cost_reduction">{{cost_reduction}}</div></article>
+  </section>
+  <section class="grid-2" style="margin-top:16px">
+    <article class="insight-box"><div class="ib-title">비용 추세 분석</div><div class="ib-body" data-llm-key="cost_trend">{{cost_trend}}</div></article>
+    <article class="insight-box"><div class="ib-title">다음 연도 목표 제안</div><div class="ib-body" data-llm-key="target_proposal">{{target_proposal}}</div></article>
+  </section>
+</main>
+
+<footer>Green-X MRV Analytics · {{report_id}} · {{activity_name}} · {{inventory_year}}년 · 인공지능 분석 리포트</footer>
+
+<script>
+const labels={{monthly_labels_json}};
+const fuel={{fuel_values_json}};
+const emissions={{emission_values_json}};
+const cost={{cost_values_json}};
+const bauCost={{bau_cost_values_json}};
+const optCost={{opt_cost_values_json}};
+const scenario5={{scenario_5_values_json}};
+const scenario10={{scenario_10_values_json}};
+const scenario15={{scenario_15_values_json}};
+Chart.defaults.color="#64748b";
+Chart.defaults.borderColor="rgba(229,231,235,.8)";
+Chart.defaults.font.family="Inter, Noto Sans KR, Arial, sans-serif";
+function fmtN(v,d=1){if(v===null||v===undefined)return "—";return Number(v).toLocaleString(undefined,{maximumFractionDigits:d});}
+new Chart(document.getElementById("dualChart"),{
+  data:{labels,datasets:[
+    {type:"bar",label:"연료 소비 ({{usage_unit}})",data:fuel,backgroundColor:"rgba(31,138,112,.68)",borderColor:"#155144",borderWidth:1,borderRadius:4,yAxisID:"yF"},
+    {type:"line",label:"배출량 (tCO2e)",data:emissions,borderColor:"#dc2626",pointBackgroundColor:"#dc2626",pointRadius:4,tension:.32,yAxisID:"yE"}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},scales:{x:{grid:{display:false}},yF:{position:"left",beginAtZero:true},yE:{position:"right",beginAtZero:true,grid:{drawOnChartArea:false}}}}
+});
+new Chart(document.getElementById("costForecastChart"),{
+  data:{labels,datasets:[
+    {type:"bar",label:"{{inventory_year}} 실적",data:cost,backgroundColor:"rgba(148,163,184,.62)",borderRadius:4},
+    {type:"bar",label:"BAU +3%",data:bauCost,backgroundColor:"rgba(217,119,6,.72)",borderRadius:4},
+    {type:"line",label:"최적화 -10%",data:optCost,borderColor:"#1f8a70",pointBackgroundColor:"#1f8a70",pointRadius:4,tension:.35}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},scales:{x:{grid:{display:false}},y:{beginAtZero:true,ticks:{callback:v=>"₩"+fmtN(v)+"천"}}}}
+});
+new Chart(document.getElementById("scenarioForecastChart"),{
+  type:"line",
+  data:{labels,datasets:[
+    {label:"{{inventory_year}} 기준",data:fuel,borderColor:"#64748b",pointRadius:3,tension:.35},
+    {label:"-5%",data:scenario5,borderColor:"#d97706",pointRadius:3,tension:.35,borderDash:[4,3]},
+    {label:"-10%",data:scenario10,borderColor:"#1f8a70",pointRadius:4,tension:.35},
+    {label:"-15%",data:scenario15,borderColor:"#7c3aed",pointRadius:3,tension:.35,borderDash:[3,3]}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},scales:{x:{grid:{display:false}},y:{beginAtZero:false,ticks:{callback:v=>fmtN(v)+" {{usage_unit}}"}}}}
+});
+(function(){
+  const blockedSelector="script,style,noscript,canvas,svg,textarea,select,option";
+  function shouldType(node){
+    if(!node||!node.nodeValue||!node.nodeValue.trim()) return false;
+    const parent=node.parentElement;
+    return Boolean(parent&&!parent.closest(blockedSelector)&&!parent.closest(".llm-placeholder")&&!parent.closest("[data-llm-key]"));
+  }
+  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{acceptNode:node=>shouldType(node)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT});
+  const nodes=[];
+  while(walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.map(node=>{
+    const span=document.createElement("span");
+    span.className="mrv-ai-typing-text";
+    span.dataset.typingText=node.nodeValue;
+    span.textContent="";
+    node.parentNode.replaceChild(span,node);
+    return span;
+  }).forEach((el,index)=>{
+    const source=el.dataset.typingText||"";
+    let cursor=0;
+    const chunk=source.length>140?Math.ceil(source.length/70):1;
+    const interval=source.length>140?7:11;
+    function tick(){
+      el.textContent+=source.slice(cursor,cursor+chunk);
+      cursor+=chunk;
+      if(cursor<source.length) window.setTimeout(tick,interval);
+    }
+    window.setTimeout(tick,Math.min(index*7,420));
+  });
+  window.parent&&window.parent.postMessage({type:"mrv-ai-analysis-ready"},"*");
+}());
+</script>
+</body>
+</html>
