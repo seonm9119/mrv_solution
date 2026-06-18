@@ -11,12 +11,21 @@ services:
       SERVICE_VERSION: 0.1.0
       MRV_LLM_API_BASE_URL: http://192.168.0.21:8006
       MRV_LLM_API_TIMEOUT_SECONDS: 180
-      PUBLIC_MRV_API_BASE_URL: http://192.168.0.11:8031
+      PUBLIC_MRV_API_BASE_URL: /api/mrv-solution
     ports:
-      - "8031:8000"
+      - "127.0.0.1:8031:8000"
+    networks:
+      default:
+      awesome_default:
+        aliases:
+          - mrv-solution-api
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health').read()"]
       interval: 10s
       timeout: 3s
       retries: 5
       start_period: 10s
+
+networks:
+  awesome_default:
+    external: true
