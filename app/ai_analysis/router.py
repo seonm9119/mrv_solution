@@ -362,7 +362,7 @@ def build_ai_analysis_shell_script(analysis_token):
   }}
 
   function resolveKey(key) {{
-    return fetch(config.apiBaseUrl + "/api/ai_analysis/html/llm", {{
+    return fetch(config.apiBaseUrl + "/ai_analysis/html/llm", {{
       method: "POST",
       headers: {{ "Content-Type": "application/json" }},
       body: JSON.stringify({{

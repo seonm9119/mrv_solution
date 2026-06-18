@@ -170,8 +170,8 @@ def get_mrv_llm_api_base_url():
 
 
 def get_public_api_base_url():
-    default_url = "http://192.168.0.11:8031"
-    return os.environ.get("PUBLIC_MRV_API_BASE_URL", default_url).strip().rstrip("/")
+    default_url = "/api/mrv-solution"
+    return os.environ.get("PUBLIC_MRV_API_BASE_URL", default_url).strip().rstrip("/") or default_url
 
 
 def get_mrv_llm_api_timeout_seconds():
@@ -1006,7 +1006,7 @@ def build_report_shell_script(report_token, tags):
       return Promise.resolve();
     }}
 
-    return fetch(config.apiBaseUrl + "/api/report/html/llm", {{
+    return fetch(config.apiBaseUrl + "/report/html/llm", {{
       method: "POST",
       headers: {{ "Content-Type": "application/json" }},
       body: JSON.stringify({{
