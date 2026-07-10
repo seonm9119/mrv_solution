@@ -9,8 +9,9 @@ services:
     environment:
       SERVICE_NAME: mrv-solution-api
       SERVICE_VERSION: 0.1.0
-      MRV_LLM_API_BASE_URL: http://192.168.0.21:8006
+      MRV_LLM_API_BASE_URL: ${MRV_LLM_API_BASE_URL:?Set MRV_LLM_API_BASE_URL in .env or the shell environment}
       MRV_LLM_API_TIMEOUT_SECONDS: 180
+      MRV_CORS_ALLOW_ORIGINS: ${MRV_CORS_ALLOW_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000,null}
       PUBLIC_MRV_API_BASE_URL: /api/mrv-solution
     ports:
       - "127.0.0.1:8031:8000"

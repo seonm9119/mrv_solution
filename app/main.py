@@ -9,6 +9,12 @@ from app.report.router import router as report_router
 
 SERVICE_NAME = os.environ.get("SERVICE_NAME", "mrv-solution-api")
 SERVICE_VERSION = os.environ.get("SERVICE_VERSION", "0.1.0")
+DEFAULT_CORS_ALLOW_ORIGINS = "http://localhost:3000,http://127.0.0.1:3000,null"
+
+
+def get_cors_allow_origins():
+    origins_text = os.environ.get("MRV_CORS_ALLOW_ORIGINS", DEFAULT_CORS_ALLOW_ORIGINS)
+    return [origin.strip() for origin in origins_text.split(",") if origin.strip()]
 
 app = FastAPI(
     title=SERVICE_NAME,
@@ -20,12 +26,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://192.168.0.11:3000",
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "null",
-    ],
+    allow_origins=get_cors_allow_origins(),
     allow_credentials=False,
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],

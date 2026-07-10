@@ -12,7 +12,7 @@ from fastapi import APIRouter, Body
 
 
 router = APIRouter()
-MRV_LLM_API_DEFAULT_BASE_URL = "http://192.168.0.21:8006"
+MRV_LLM_API_DEFAULT_BASE_URL = ""
 EMPTY_VALUE = "—"
 TEMPLATE_DIR = Path(__file__).resolve().parent / "templates"
 REPORT_CONTEXTS = {}
