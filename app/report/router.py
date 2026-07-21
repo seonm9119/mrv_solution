@@ -120,6 +120,14 @@ async def generate_report(payload=Body(default={})):
         "report_id": context["report_id"],
         "report_token": report_token,
         "generated_at": datetime.now(timezone.utc).isoformat(),
+        "awesomi": {
+            "status": "pending" if report_token else "failed",
+            "base_url": get_mrv_llm_api_base_url(),
+            "error": llm_error,
+            "rendered_tags": 0,
+            "total_tags": len(llm_tags),
+            "failed_tags": [],
+        },
         "qwen": {
             "status": "pending" if report_token else "failed",
             "base_url": get_mrv_llm_api_base_url(),
@@ -203,7 +211,7 @@ async def call_mrv_solution_llm_api(tag, db_ctx):
 
     async with httpx.AsyncClient(timeout=timeout) as client:
         response = await client.post(
-            f"{base_url}/api/mrv-solution/llm",
+            f"{base_url}/api/awesomi/mrv/llm",
             json=request_body,
             headers={"Content-Type": "application/json"},
         )

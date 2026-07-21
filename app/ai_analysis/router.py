@@ -77,6 +77,12 @@ async def generate_ai_analysis(payload=Body(default={})):
         "report_id": context["report_id"],
         "analysis_token": analysis_token,
         "generated_at": datetime.now(timezone.utc).isoformat(),
+        "awesomi": {
+            "status": "pending",
+            "rendered_tags": 0,
+            "total_tags": len(AI_ANALYSIS_LLM_KEY_TAGS),
+            "failed_tags": [],
+        },
         "qwen": {
             "status": "pending",
             "rendered_tags": 0,
